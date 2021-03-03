@@ -19,10 +19,39 @@
 \institute{Liberty University}
 \date{April 13, 2021}
 
+% https://tex.stackexchange.com/questions/48473/best-way-to-give-sources-of-images-used-in-a-beamer-presentation
+\setbeamercolor{framesource}{fg=gray}
+\setbeamerfont{framesource}{size=\footnotesize}
+
+\newcommand{\source}[1]{\begin{textblock*}{4cm}(11.5cm,8cm)
+    \begin{beamercolorbox}[ht=0.5cm,right]{framesource}
+        \usebeamerfont{framesource}\usebeamercolor[fg]{framesource} Source: {#1}
+    \end{beamercolorbox}
+\end{textblock*}}
+
+% https://tex.stackexchange.com/questions/16793/global-setting-of-spacing-between-items-in-itemize-environment-for-beamer
+\let\olditem\item
+\renewcommand{\item}{\olditem\vspace{8pt}}
+
+% https://tex.stackexchange.com/questions/262115/bold-serif-headings-in-beamer
+\setbeamerfont{frametitle}{series=\bfseries,parent=structure}
+
 \begin{document}
 
 \frame{\titlepage}
 \usebackgroundtemplate{\includegraphics[width=\paperwidth,height=\paperheight]{solidwhitenolu.jpg}}
+
+\begin{frame}
+\begin{itemize}
+\item Look for patterns
+\item Let nothing go unnoticed
+\item Write throwaway code
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Visit Me}
+  GitHub: \url{https://github.com/npjg}
+\end{frame}
 
 \begin{frame}[allowframebreaks]{References}
   \bibliographystyle{IEEEtran}
