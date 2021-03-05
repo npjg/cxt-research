@@ -1,25 +1,71 @@
-\documentclass[xcolor=dvipsnames,aspectratio=169,handout,notes]{beamer}
-% \usetheme{Berkeley}
-\usecolortheme{whale}
-
-\definecolor{LUblue}{rgb}{0.03921568627, 0.14509803921, 0.30588235294} % UBC Blue (primary)
-\definecolor{LUred}{rgb}{0.6,0,0} % UBC Grey (secondary)
-
-\setbeamercolor{palette primary}{bg=LUblue,fg=white}
-\setbeamercolor{palette secondary}{bg=LUblue,fg=white}
-\setbeamercolor{palette tertiary}{bg=LUblue,fg=white}
-\setbeamercolor{palette quaternary}{bg=LUblue,fg=white}
-\setbeamercolor{structure}{fg=LUblue} % itemize, enumerate, etc
-\setbeamercolor{section in toc}{fg=LUblue} % TOC sections
-
-\usebackgroundtemplate{\includegraphics[width=\paperwidth,height=\paperheight]{solidwhite.jpg}}
+\documentclass[xcolor=dvipsnames,aspectratio=169,notes]{beamer}
 
 \title{Reviving the Media Station:\\A Study in Reverse Engineering}
 \author{Nathanael Gentry}
-\institute{Liberty University}
+\institute{School of Engineering}
 \date{April 13, 2021}
 
+\usepackage[T1]{fontenc}
+\usepackage{caption}
+\renewcommand{\figurename}{}
+
+% Unused ultimately, but still interesting:
+% https://tex.stackexchange.com/questions/569923/conflict-of-resizebox-and-verbatim-mode
+\newsavebox{\tablebox}
+
+% ~~~~~ LIGHT THEME ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% \usetheme{Berkeley}
+% \usecolortheme{whale}
+
+% \definecolor{LUblue}{rgb}{0.03921568627, 0.14509803921, 0.30588235294} % UBC Blue (primary)
+% \definecolor{LUred}{rgb}{0.6,0,0} % UBC Grey (secondary)
+
+% \setbeamercolor{palette primary}{bg=LUblue,fg=white}
+% \setbeamercolor{palette secondary}{bg=LUblue,fg=white}
+% \setbeamercolor{palette tertiary}{bg=LUblue,fg=white}
+% \setbeamercolor{palette quaternary}{bg=LUblue,fg=white}
+% \setbeamercolor{structure}{fg=LUblue} % itemize, enumerate, etc
+% \setbeamercolor{section in toc}{fg=LUblue} % TOC sections
+
+% \usebackgroundtemplate{\includegraphics[width=\paperwidth,height=\paperheight]{solidwhite.jpg}}
+
+% ~~~~~ DARK THEME ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% https://tex.stackexchange.com/questions/57477/beamer-dark-theme
+% \usetheme{Warsaw}
+
+\setbeamercolor{normal text}{fg=white,bg=black!90}
+\setbeamercolor{structure}{fg=white}
+
+\setbeamercolor{alerted text}{fg=red!85!black}
+
+\setbeamercolor{item projected}{use=item,fg=black,bg=item.fg!35}
+
+\setbeamercolor*{palette primary}{use=structure,fg=structure.fg}
+\setbeamercolor*{palette secondary}{use=structure,fg=structure.fg!95!black}
+\setbeamercolor*{palette tertiary}{use=structure,fg=structure.fg!90!black}
+\setbeamercolor*{palette quaternary}{use=structure,fg=structure.fg!95!black,bg=black!80}
+
+\setbeamercolor*{framesubtitle}{fg=white}
+
+\setbeamercolor*{block title}{parent=structure,bg=black!60}
+\setbeamercolor*{block body}{fg=black,bg=black!10}
+\setbeamercolor*{block title alerted}{parent=alerted text,bg=black!15}
+\setbeamercolor*{block title example}{parent=example text,bg=black!15}
+
+\usebackgroundtemplate{\includegraphics[width=\paperwidth,height=\paperheight]{demossblue.jpg}}
+
+% https://tex.stackexchange.com/questions/411313/using-listings-package-with-beamer-block-environments-for-displaying-source-code
+\usepackage{listings}
+\lstset{numbers=left, numberstyle=\tiny, stepnumber=1,firstnumber=1,
+    numbersep=5pt,language=C,
+    stringstyle=\ttfamily,
+    basicstyle=\footnotesize,
+    showstringspaces=false
+}
+
 % https://tex.stackexchange.com/questions/48473/best-way-to-give-sources-of-images-used-in-a-beamer-presentation
+\usepackage[absolute,overlay]{textpos}
+
 \setbeamercolor{framesource}{fg=gray}
 \setbeamerfont{framesource}{size=\footnotesize}
 
@@ -36,10 +82,145 @@
 % https://tex.stackexchange.com/questions/262115/bold-serif-headings-in-beamer
 \setbeamerfont{frametitle}{series=\bfseries,parent=structure}
 
+% https://www.patrickbaylis.com/blog/2018-10-11-beamer-resizing/
+\usepackage{adjustbox}
+\makeatletter
+\newcommand{\fitimage}[2][\@nil]{
+  \begin{figure}
+    \begin{adjustbox}{width=0.9\textwidth, totalheight=\textheight-2\baselineskip-2\baselineskip,keepaspectratio}
+      \includegraphics{#2}
+    \end{adjustbox}
+    \def\tmp{#1}%
+    \ifx\tmp\@nnil
+    \else
+    \caption{#1}
+    \fi
+  \end{figure}
+}
+\makeatother
+
+% \usepackage{listings}
+\usepackage{adjustbox}
+
 \begin{document}
 
 \frame{\titlepage}
-\usebackgroundtemplate{\includegraphics[width=\paperwidth,height=\paperheight]{solidwhitenolu.jpg}}
+
+\usebackgroundtemplate{\includegraphics[width=\paperwidth,height=\paperheight]{solidbluenolu.jpg}}
+\frame{}
+
+\begin{frame}
+  \fitimage{gsocsun}
+  \source{\cite{GoogleSummerCode2020}}
+\end{frame}
+
+\begin{frame}
+  \fitimage{gsoc}
+  \source{\cite{GoogleSummerCode2020}}
+\end{frame}
+
+\begin{frame}
+  \fitimage{scummvm}
+  \source{\cite{ScummVM}}
+\end{frame}
+
+\begin{frame}
+  \vspace{-2em}
+  \begin{figure}
+    \includegraphics[scale=0.4]{scummvm}
+  \end{figure}
+  \vspace{1em}\pause
+  \begin{itemize}
+    \item Open-source reimplementation of game interpreters\pause
+    \item Original game data playable on newer and diverse platforms
+  \end{itemize}
+  \source{\cite{ScummVM}}
+\end{frame}
+
+\begin{frame}
+  \fitimage{d4cover}
+  \source{\cite{TipsTricksDirector1994}}
+\end{frame}
+
+\begin{frame}
+\fitimage{candle}
+\end{frame}
+
+\begin{frame}
+  \fitimage{alien}
+\end{frame}
+
+\newcommand{\github}{\begin{frame}
+  \fitimage{seuss2}
+  \vspace{-1.5em}
+  \begin{center}
+    \huge \url{https://npjg.github.io}
+  \end{center}
+\end{frame}}
+\github
+
+\begin{frame}
+  \fitimage{asblogo}
+  \source{\cite{DisneyAnimatedStoryBook2020}}
+\end{frame}
+
+\begin{frame}
+  \fitimage{msitrans}
+  \source{\cite{flurryDisneyAnimatedStoryBook1994}}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+  ``I lost my copy of the source many years ago when a backup drive failed. I was
+  hoping to do a similar thing to what ScummVM does...''
+\end{center}
+\end{frame}
+
+\begin{frame}{Research Question}\pause
+  \begin{center}
+    \huge
+    How can an interactive multimedia format be reverse-engineered from scratch?
+  \end{center}
+\end{frame}
+
+% To show how I have begun answering this question...
+
+\begin{frame}{Counting}\pause
+\begin{itemize}
+  \item \textbf{Base-10} (decimal) uses 10 digits --\pause{} the numbers 0-9.\\\pause
+  \item \textbf{Base-2} (binary) uses 2 digits --\pause{} the bits \texttt{0} and \texttt{1}.\\\pause
+  \item \textbf{Base-16} (hexadecimal) uses 16 digits --\pause{} the numbers 0-9\pause{} and
+    letters A-F.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Bytes}\pause
+  \begin{center}
+    \large
+
+    A \textbf{byte} is a collection of 8 bits.\\\pause
+    Each byte represents a value from $0 = (2^0 - 1)$\pause{} to $255 = (2^8 - 1)$.\pause
+
+    \vspace{1em}
+    For example,\pause
+    \begin{equation*}
+      (10101010)_2\pause \equiv \mathbf{(AA)}_{16}\pause \equiv (170)_{10}.\pause
+    \end{equation*}
+
+    Additionally,\pause
+    \begin{equation*}
+      \mathbf{(AA)_{16}}\pause\equiv  \textbf{\texttt{0xAA}}\pause \equiv  \textbf{\texttt{0xaa}}.
+    \end{equation*}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Files}\pause
+  \begin{center}
+    A \textbf{file} is a collection of bytes united under one name.\\\pause
+    Each byte has a unique \textbf{address} -- its position in the file.\pause
+  \end{center}
+\end{frame}
+
 
 \begin{frame}
 \begin{itemize}
