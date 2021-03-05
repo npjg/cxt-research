@@ -1,5 +1,6 @@
-#/usr/bin/python
+#!/usr/bin/python
 
+import sys
 import re
 from strip_ansi import strip_ansi
 
@@ -9,7 +10,9 @@ def parselines(lines, major_len=4, minor_len=4):
     latex.append("\\UseRawInputEncoding\n\\begin{{tabular}}{{{}}}".format(fmt))
 
     for line in lines:
-        line = strip_ansi(line)
+        line = strip_ansi(line).replace('\n', '')
+        if line == '':
+            continue
 
         theSplit = re.split(' │', line, maxsplit=3)
 
@@ -20,9 +23,12 @@ def parselines(lines, major_len=4, minor_len=4):
             " & ".join([
                 theSplit[0][3:].strip(),
                 *theBytes,
-                "\\verbЯ{}Я".format(re.sub(r'[^\x00-\x7F]','.', theSplit[2])[1:-1])
+                "\\verbЯ{}Я".format(re.sub(r'[^\x00-\x7F]','.', theSplit[2])[1:])
             ])))
 
     latex.append("\\end{tabular}\n")
 
     return latex
+
+if __name__ == "__main__":
+    print("\n".join(parselines(sys.stdin.readlines())))
