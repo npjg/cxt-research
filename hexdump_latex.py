@@ -23,7 +23,7 @@ def parselines(lines, major_len=4, minor_len=4):
             " & ".join([
                 theSplit[0][3:].strip(),
                 *theBytes,
-                "\\verbЯ{}Я".format(re.sub(r'[^\x00-\x7F]','.', theSplit[2])[1:])
+                "\\verb│{}│".format(re.sub(r'[^\x00-\x7F]','.', theSplit[2])[1:])
             ])))
 
     latex.append("\\end{tabular}\n")
