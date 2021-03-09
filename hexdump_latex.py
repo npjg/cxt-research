@@ -29,12 +29,12 @@ def parselines(lines, major_len=4, minor_len=4):
         theBytes = [conv.convert(byte, full=False) if conv else byte for byte in  theSplit[1].strip().split()][:-1]
         theBytes +=  ["  "] * ((major_len*minor_len) - len(theBytes) - (0 if conv else 1))
         theAscii = theSplit[2].lstrip()
+        theAscii = theAscii.replace(" ", "\\textvisiblespace")
         if conv: theAscii = conv.convert(theAscii, full=False)
         if not args.with_unicode:
             theAscii = re.sub(r'[^\x00-\x7F]','.', theAscii)
-        # theAscii = "".join(["\\verb│{}│".format(char) for char in theAscii])
 
-        latex.append("  {} \\\\".format(" & ".join([theAddress, *theBytes, "\\texttt{{{}}}".format(theAscii)]))) # "\\verb│{}│".format(
+        latex.append("  {} \\\\".format(" & ".join([theAddress, *theBytes, "{}".format(theAscii)])))
 
     if args.with_ansi_colors:
         cells = conv.convert("\n".join(latex), full=False)
@@ -60,4 +60,5 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    print(parselines(sys.stdin.readlines()))
+    result = parselines(sys.stdin.readlines())
+    print(result)
