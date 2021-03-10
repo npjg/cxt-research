@@ -10,6 +10,14 @@ import shlex
 
 HEXDUMP = "hexdump {} -s {} -n {} -f hexdump.cfg"
 
+def coordcompare(a, coord):
+    if isinstance(coord, list) and len(coord) == 2:
+        return a in range(*coord)
+    elif isinstance(coord, int):
+        return a == coord
+    else:
+        raise ValueError("Unknwon coordinate type")
+
 def parselines(lines, coordinates=None):
     # Assumes the input file only contains LaTeX tabular rows (the interior of
     # the tabular environment), and that the format is [offset & byte1 & byte2 &
@@ -18,12 +26,15 @@ def parselines(lines, coordinates=None):
     result = []
     for i, line in enumerate(lines):
         line = line.split("&")
+        if len(line) == 1:
+            continue
+
         processed_line = []
         for j, byte in enumerate(line[1:-1]):
             spec = None
             for coord in coordinates:
-                if coord.get("i") and coord.get("i") == i:
-                    if coord.get("j") == j or coord.get("j") == None:
+                if coordcompare(i, coord.get("i")):
+                    if coord.get("j") == None or coordcompare(j, coord.get("j")):
                         spec = coord
                         break
 
