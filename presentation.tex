@@ -1,17 +1,64 @@
-\documentclass[xcolor=dvipsnames,aspectratio=169,notes]{beamer}
+% https://tex.stackexchange.com/questions/27351/speed-up-beamer-compile-time
+
+\documentclass[xcolor={dvipsnames,table},aspectratio=169]{beamer}
+% \includeonlyframes{current}
+
+\graphicspath{{graphics/}}
 
 \title{Reviving the Media Station:\\A Study in Reverse Engineering}
 \author{Nathanael Gentry}
 \institute{School of Engineering}
 \date{April 13, 2021}
 
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily, keywordstyle=\bfseries, language=Python}
+
+% https://stackoverflow.com/questions/1346512/to-escape-many-in-latex-efficiently
+\usepackage{underscore}
+
 \usepackage[T1]{fontenc}
 \usepackage{caption}
-\renewcommand{\figurename}{}
+\usepackage{forest}
+\usepackage{tcolorbox}
+\usepackage{verbatim}
+
+\newcommand{\hexdump}[1]{
+  {\ttfamily\small
+  \begin{tabular}{@{}c|*{15}{c@{ }}c|l@{}}
+    \input{dumps/#1}
+  \end{tabular}}
+}
+
+% https://tex.stackexchange.com/questions/5073/making-a-simple-directory-tree
+\forestset{%
+  default preamble={for tree={%
+      font=\ttfamily, %
+      grow'=0, %
+      child anchor=west, %
+      parent anchor=south, %
+      anchor=west, %
+      calign=first, %
+      edge path={ %
+        \noexpand\path [draw, \forestoption{edge}] %
+        (!u.south west) +(7.5pt,0) |- node[fill,inner sep=1.25pt] {} (.child anchor)\forestoption{edge label}; %
+      }, %
+      before typesetting nodes={ %
+        if n=1 %
+        {insert before={[,phantom]}} %
+        {} %
+      }, %
+      fit=band, %
+      before computing xy={l=15pt}, %
+    } %
+  } %
+}
 
 % Unused ultimately, but still interesting:
 % https://tex.stackexchange.com/questions/569923/conflict-of-resizebox-and-verbatim-mode
 \newsavebox{\tablebox}
+
+\setbeamertemplate{section in toc}[sections numbered]
+\setbeamertemplate{subsection in toc}[subsections numbered]
 
 % ~~~~~ LIGHT THEME ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 % \usetheme{Berkeley}
@@ -52,16 +99,16 @@
 \setbeamercolor*{block title alerted}{parent=alerted text,bg=black!15}
 \setbeamercolor*{block title example}{parent=example text,bg=black!15}
 
-\usebackgroundtemplate{\includegraphics[width=\paperwidth,height=\paperheight]{demossblue.jpg}}
+\usebackgroundtemplate{\includegraphics[width=\paperwidth,height=\paperheight]{demossblue}}
 
 % https://tex.stackexchange.com/questions/411313/using-listings-package-with-beamer-block-environments-for-displaying-source-code
-\usepackage{listings}
-\lstset{numbers=left, numberstyle=\tiny, stepnumber=1,firstnumber=1,
-    numbersep=5pt,language=C,
-    stringstyle=\ttfamily,
-    basicstyle=\footnotesize,
-    showstringspaces=false
-}
+% \usepackage{listings}
+% \lstset{numbers=left, numberstyle=\tiny, stepnumber=1,firstnumber=1,
+%     numbersep=5pt,language=C,
+%     stringstyle=\ttfamily,
+%     basicstyle=\footnotesize,
+%     showstringspaces=false
+% }
 
 % https://tex.stackexchange.com/questions/48473/best-way-to-give-sources-of-images-used-in-a-beamer-presentation
 \usepackage[absolute,overlay]{textpos}
@@ -99,14 +146,22 @@
 }
 \makeatother
 
-% \usepackage{listings}
-\usepackage{adjustbox}
+% https://statisticaloddsandends.wordpress.com/2019/02/18/beamer-inserting-section-slides-before-each-section/
+\AtBeginSection[]
+{
+    \begin{frame}
+        \frametitle{Reverse-Engineering Process}
+        \tableofcontents[currentsection]
+    \end{frame}
+}
+
+\renewcommand{\figurename}{}
 
 \begin{document}
 
 \frame{\titlepage}
 
-\usebackgroundtemplate{\includegraphics[width=\paperwidth,height=\paperheight]{solidbluenolu.jpg}}
+\usebackgroundtemplate{\includegraphics[width=\paperwidth,height=\paperheight]{solidbluenolu}}
 \frame{}
 
 \begin{frame}
@@ -185,7 +240,11 @@
 
 % To show how I have begun answering this question...
 
-\begin{frame}{Counting}\pause
+\begin{frame}{Reverse-Engineering Process}
+  \tableofcontents
+\end{frame}
+
+\begin{frame}{Bytes}\pause
 \begin{itemize}
   \item \textbf{Base-10} (decimal) uses 10 digits --\pause{} the numbers 0-9.\\\pause
   \item \textbf{Base-2} (binary) uses 2 digits --\pause{} the bits \texttt{0} and \texttt{1}.\\\pause
@@ -214,13 +273,102 @@
   \end{center}
 \end{frame}
 
+\section{Understand file formats}
+
 \begin{frame}{Files}\pause
   \begin{center}
     A \textbf{file} is a collection of bytes united under one name.\\\pause
     Each byte has a unique \textbf{address} -- its position in the file.\pause
   \end{center}
+
+  \begin{figure}
+    \hexdump{garage-117-0x00-0x80.0}
+  \end{figure}
+
+  \source{\cite{flurryDisneyAnimatedStoryBook1994}, \texttt{data/107.cxt}}
 \end{frame}
 
+\begin{frame}{Files}
+  \begin{figure}
+    \hexdump{garage-117-0x00-0x80.1}
+  \end{figure}
+
+  \begin{center}\pause
+    \Large \texttt{RIFF}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Files}
+  \begin{figure}
+    \hexdump{garage-117-0x00-0x80.2}
+  \end{figure}
+
+  \begin{center}\pause
+    \Large \texttt{0x09\,c7\,66} bytes
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{RIFF:\pause{} Resource Interchange File Format}
+\end{frame}
+
+\begin{frame}{RIFF: Resource Interchange File Format}
+  \fitimage{riffstruct}
+  \source{\cite{loomisRIFFFileStructure2001}}
+\end{frame}
+
+\begin{frame}[fragile]{RIFF: Resource Interchange File Format}
+\begin{lstlisting}[firstnumber=1, label=glabels, xleftmargin=10pt]
+typedef struct {
+     char ckID[4];         // Unique chunk identifier
+     uint32 ckSize;        // Size of field <ckData>
+     byte *ckData[ckSize]; // Actual data
+} chunk;
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{RIFF: Resource Interchange File Format}
+  \begin{center}
+    In a RIFF file, the chunk IDs are often the only plain-text strings in the file.
+  \end{center}\pause
+  \centerline{\texttt{\$ strings 100.cxt}}
+\end{frame}
+
+\begin{frame}{CD-ROM Structure}
+  % https://tex.stackexchange.com/questions/23647/drawing-a-directory-listing-a-la-the-tree-command-in-tikz
+  \begin{figure}
+    \begin{forest}
+      [DALMATIANS
+      [DATA
+      [BOOT.STM,name=boot]
+      [100.CXT,name=startcxt] % Include dots here
+      [101.CXT]
+      [3983.CXT,name=endcxt]
+      [PROFILE.\textunderscore ST]
+      ] % Include dots here
+      [101\textunderscore ASB.EXE]]
+      \pause{}
+      \node[draw,line width=1mm,fit={(startcxt) (endcxt)},label={[label
+        distance=0.3cm]0:\Large Contexts}] {};
+    \end{forest}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Context Structure}
+  \begin{figure}
+    \begin{forest}
+      [100.CXT
+      [RIFF
+      [igod] % Include dots here
+      [a001]] % Include dots here
+      [RIFF
+      [a100]] % Include dots here
+      [RIFF
+      [a200]]]
+    \end{forest}
+  \end{figure}
+\end{frame}
+
+\section{Parse data structures}
 
 \begin{frame}
 \begin{itemize}
