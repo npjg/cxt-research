@@ -11,7 +11,9 @@
 \date{April 13, 2021}
 
 \usepackage{listings}
-\lstset{basicstyle=\ttfamily, keywordstyle=\bfseries, language=Python}
+\lstset{basicstyle=\ttfamily, keywordstyle=\bfseries, language=Python, escapeinside={(*}{*)}}
+
+\usepackage{lmodern}
 
 % https://stackoverflow.com/questions/1346512/to-escape-many-in-latex-efficiently
 \usepackage{underscore}
@@ -22,11 +24,12 @@
 \usepackage{tcolorbox}
 \usepackage{verbatim}
 
-\newcommand{\hexdump}[1]{
+\newcommand{\hexdump}[3]{
   {\ttfamily\small
   \begin{tabular}{@{}c|*{15}{c@{ }}c|l@{}}
     \input{dumps/#1}
   \end{tabular}}
+\source{\cite{#2}, \texttt{#3}}
 }
 
 % https://tex.stackexchange.com/questions/5073/making-a-simple-directory-tree
@@ -282,7 +285,7 @@
   \end{center}
 
   \begin{figure}
-    \hexdump{garage-117-0x00-0x80.0}
+    \hexdump{garage-117-0x00-0x80.0}{garage}{117.cxt}
   \end{figure}
 
   \source{\cite{flurryDisneyAnimatedStoryBook1994}, \texttt{data/107.cxt}}
@@ -290,7 +293,7 @@
 
 \begin{frame}{Files}
   \begin{figure}
-    \hexdump{garage-117-0x00-0x80.1}
+    \hexdump{garage-117-0x00-0x80.1}{garage}{117.cxt}
   \end{figure}
 
   \begin{center}\pause
@@ -300,7 +303,7 @@
 
 \begin{frame}{Files}
   \begin{figure}
-    \hexdump{garage-117-0x00-0x80.2}
+    \hexdump{garage-117-0x00-0x80.2}{garage}{117.cxt}
   \end{figure}
 
   \begin{center}\pause
@@ -370,17 +373,134 @@ typedef struct {
 
 \section{Parse data structures}
 
-\begin{frame}
-\begin{itemize}
-\item Look for patterns
-\item Let nothing go unnoticed
-\item Write throwaway code
-\end{itemize}
+% Don't change the space with highlighting:
+% https://tex.stackexchange.com/questions/198931/color-overshoots-when-using-cellcolor-without-intercolumn-space
+\newcommand{\imageheader}[1]{
+  \begin{figure}
+    \hexdump{garage-117-0x2200-0xa0.#1}{garage}{117.cxt}
+  \end{figure}
+}
+
+\foreach\x in {0,1,2,3,4,5,6,7,8,9,10}{
+  \begin{frame}{Data Structures}
+    \imageheader{\x}
+  \end{frame}
+}
+
+% TODO: Replace this with the location of all 03 00 bytes.
+% I can implement a basic search parser.
+\begin{frame}{Data Structures}
+  \begin{figure}
+    \hexdump{garage-117-0x2200-0xa0.10}{garage}{117.cxt}
+  \end{figure}
+  \begin{center}
+    Why are there so many \texttt{03 00} bytes?
+  \end{center}
 \end{frame}
 
-\begin{frame}{Visit Me}
-  GitHub: \url{https://github.com/npjg}
+\begin{frame}[fragile]{Data Structures}\pause
+\begin{lstlisting}
+class DatumType(IntEnum):
+    UINT8      = 0x0002,
+    UINT16     = 0x0003,
+    SINT16     = 0x0010,
+    STRING     = 0x0012,
+    FILE       = 0x000a,
+    POINT      = 0x000f,
+    REF        = 0x001b,
+    BBOX       = 0x000d,
+    POLY       = 0x001d
+\end{lstlisting}\pause
+  \begin{center}
+    \Large \textbf{datum}\pause{} (data):\pause{} a single piece of information.
+  \end{center}
 \end{frame}
+
+\begin{frame}[fragile]{Data Structures}
+\begin{lstlisting}
+class DatumType(IntEnum):
+    UINT8      = 0x0002,
+    UINT16     = 0x0003,
+    SINT16     = 0x0010,
+    STRING     = 0x0012,
+    FILE       = 0x000a,
+    (*\LARGE \verb|POINT   = 0x000f|*),
+    REF        = 0x001b,
+    BBOX       = 0x000d,
+    POLY       = 0x001d
+\end{lstlisting}
+  \begin{center}
+    \Large \textbf{datum} (data): a single piece of information.
+  \end{center}
+\end{frame}
+
+\begin{frame}{Data Structures}
+  \begin{center}
+    In reverse engineering, the discoveries you make build upon themselves dramatically.
+  \end{center}
+\end{frame}
+
+\begin{frame}[label=current]{Data Structures}
+  \imageheader{0}
+  \begin{center}
+    Background\pause{} $\implies$\pause{} Full-screen $\implies$\pause{} VGA Graphics $\implies$\pause{}
+    $640\times 480$
+  \end{center}\pause\vspace{-1.5em}
+  \begin{center}
+    \LARGE $640\equiv \texttt{0x02\,80} \equiv \texttt{08 20}$
+  \end{center}
+\end{frame}
+
+\begin{frame}[label=current]{Data Structures}
+  \imageheader{11}
+  \begin{center}
+    Background $\implies$ Full-screen $\implies$ VGA Graphics $\implies$
+    $640\times 480$
+  \end{center}\vspace{-1.5em}
+  \begin{center}
+    \LARGE $640\equiv \texttt{0x02\,80} \equiv \texttt{08 20}$
+  \end{center}
+\end{frame}
+
+\begin{frame}[label=current]{Data Structures}
+  \imageheader{12}
+  \begin{center}
+    Background $\implies$ Full-screen $\implies$ VGA Graphics $\implies$
+    $640\times 480$
+  \end{center}\vspace{-1.5em}
+  \begin{center}
+    \LARGE $480\equiv \texttt{0x01\,e0} \equiv \texttt{e0 01}$
+  \end{center}
+\end{frame}
+
+\begin{frame}[label=current]{Data Structures}
+  \imageheader{13}
+  \begin{center}
+    Background $\implies$ Full-screen $\implies$ VGA Graphics $\implies$
+    $640\times 480$
+  \end{center}\vspace{-1.5em}\pause
+  \begin{center}
+    \Large Point: $(x, y)$
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile,label=current]{Data Structures}
+\begin{figure}
+\begin{lstlisting}
+class Point(Object):
+    def __init__(self, m):
+        value_assert(m, b'\x10\x00')
+        self.x = struct.unpack("<H", m.read(2))[0]
+
+        value_assert(m, b'\x10\x00')
+        self.y = struct.unpack("<H", m.read(2))[0]
+\end{lstlisting}
+\end{figure}
+\end{frame}
+
+\section{Extract game assets}
+
+\section{Write interactive engine}
 
 \begin{frame}[allowframebreaks]{References}
   \bibliographystyle{IEEEtran}

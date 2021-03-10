@@ -12,7 +12,7 @@ HEXDUMP = "hexdump {} -s {} -n {} -f hexdump.cfg"
 
 def coordcompare(a, coord):
     if isinstance(coord, list) and len(coord) == 2:
-        return a in range(*coord)
+        return a in range(coord[0], coord[1] + 1)
     elif isinstance(coord, int):
         return a == coord
     else:
