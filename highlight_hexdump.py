@@ -1,23 +1,29 @@
 #!/usr/bin/python
 
 import sys
+import os
 import argparse
 import ast
+import json
 
-def parselines(lines):
+def parselines(lines, coordinates=None):
     # Assumes the input file only contains LaTeX tabular rows (the interior of the tabular environment), and that the format is [offset & byte1 & byte2 & ... & ascii]
+    if not coordinates:
+        coordinates = args.coordinates
+
     result = []
     for i, line in enumerate(lines):
         line = line.split("&")
         processed_line = []
         for j, byte in enumerate(line[1:-1]):
             spec = None
-            for coord in args.coordinates:
-                if (i, j) == coord[0]:
-                    spec = coord
-                    break
+            for coord in coordinates:
+                if coord.get("i") and coord.get("i") == i:
+                    if coord.get("j") == j or coord.get("j") == None:
+                        spec = coord
+                        break
 
-            processed_line.append((" \\cellcolor{{{}}}".format(spec[1] if len(spec) > 1 else args.default_color) if spec else "") + byte)
+            processed_line.append((" \\cellcolor{{{}}}".format(spec.get("c", args.default_color)) if spec else "") + byte)
 
         result.append("&".join([line[0], *processed_line, line[-1]]))
                 
@@ -37,6 +43,13 @@ if __name__ == "__main__":
     parser.add_argument(
         "-c", "--coordinates", default="[]",
         help="A list of the cell coordinates of the input to highlight, in the format [(row, col), <color>]."
+    )
+
+    parser.add_argument(
+        "-C", "--coordinate-file", default=None,
+        help="A file containing newline-separated permutations of the highlights in the \
+desired input. Highlighted output will be written sequentially to files with the \
+same name as the input file."
     )
 
     parser.add_argument(
@@ -60,5 +73,14 @@ if __name__ == "__main__":
     else:
         lines = sys.stdin.readlines()
 
-    result = parselines(lines)
-    print(result)
+    if args.coordinate_file:
+        with open(args.coordinate_file, 'r') as f:
+            name = os.path.splitext(os.path.basename(args.coordinate_file))[0]
+            perms = json.load(f)
+            for n, perm in enumerate(perms):
+                with open("{}.{}.tex".format(name, n), 'w') as o:
+                    o.write(parselines(lines, coordinates=perm))
+
+    else:
+        result = parselines(lines)
+        print(result)
