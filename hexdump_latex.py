@@ -15,7 +15,7 @@ def parselines(lines, major_len=4, minor_len=4):
     latex = []
     fmt = "@{{}}c|*{{{}}}{{c@{{ }}}}c|c@{{}}".format(major_len*minor_len-1)
 
-    for line in lines:
+    for i, line in enumerate(lines):
         if not conv: line = strip_ansi(line)
 
         line = line.replace('\n', '')
@@ -28,14 +28,17 @@ def parselines(lines, major_len=4, minor_len=4):
         theAddress = theSplit[0].strip()[3:]
         theBytes = [conv.convert(byte, full=False) if conv else byte for byte in  theSplit[1].strip().split()][:-1]
         theBytes +=  ["  "] * ((major_len*minor_len) - len(theBytes) - (0 if conv else 1))
+        theHighlightedBytes = []
+        for j, byte in enumerate(theBytes):
+            theHighlightedBytes.append(("\\cellcolor{{{}}}".format("red!25") if (i, j) in args.highlight_bytes else "") + byte)
+
         theAscii = theSplit[2].lstrip()
         theAscii = theAscii.replace(" ", "\\textvisiblespace")
         if conv: theAscii = conv.convert(theAscii, full=False)
-        if not args.with_unicode:
-            theAscii = re.sub(r'[^\x00-\x7F]','.', theAscii)
+        if not args.with_unicode: theAscii = re.sub(r'[^\x00-\x7F]','.', theAscii)
 
-        latex.append("  {} \\\\".format(" & ".join([theAddress, *theBytes, "{}".format(theAscii)])))
-
+        latex.append("  {} \\\\".format(" & ".join([theAddress, *theHighlightedBytes, "{}".format(theAscii)])))
+ 
     if args.with_ansi_colors:
         cells = conv.convert("\n".join(latex), full=False)
     else:
@@ -59,6 +62,13 @@ if __name__ == "__main__":
         help="Translate ANSI color codes into LaTeX colors (requires ansifilter to translate)"
     )
 
+    parser.add_argument(
+        "-H", "--highlight-bytes", default="",
+        help="Highlight these bytes at the given row-column hexdump indices (NOT absolute addresses)"
+    )
+
+    import ast
     args = parser.parse_args()
+    args.highlight_bytes = ast.literal_eval(args.highlight_bytes)
     result = parselines(sys.stdin.readlines())
     print(result)
