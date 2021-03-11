@@ -292,22 +292,28 @@
   \begin{center}
     A \textbf{file} is a collection of bytes united under one name.\\\pause
     Each byte has a unique \textbf{address} -- its position in the file.\pause
-  \end{center}
-
+  \end{center}\vspace{-1em}
   \begin{figure}
     \hexdump{garage-117-0x00-0x80.0}{garage}{117.cxt}
   \end{figure}
+\end{frame}
 
-  \source{\cite{flurryDisneyAnimatedStoryBook1994}, \texttt{data/107.cxt}}
+\begin{frame}{Files}
+  \begin{center}
+    A \textbf{file} is a collection of bytes united under one name.\\
+    Each byte has a unique \textbf{address} -- its position in the file.
+  \end{center}\vspace{-1em}
+  \begin{figure}
+    \hexdump{garage-117-0x00-0x80.1}{garage}{117.cxt}
+  \end{figure}
 \end{frame}
 
 \begin{frame}{Files}
   \begin{figure}
     \hexdump{garage-117-0x00-0x80.1}{garage}{117.cxt}
   \end{figure}
-
-  \begin{center}\pause
-    \Large \texttt{RIFF}
+  \begin{center}
+    \Huge \texttt{RIFF}
   \end{center}
 \end{frame}
 
@@ -315,21 +321,52 @@
   \begin{figure}
     \hexdump{garage-117-0x00-0x80.2}{garage}{117.cxt}
   \end{figure}
-
   \begin{center}\pause
-    \Large \texttt{0x09\,c7\,66} bytes
+    \Huge \texttt{0x09\,c7\,66} bytes\\ \pause
+    \huge \textbf{(little endian)}
   \end{center}
 \end{frame}
 
-\begin{frame}[fragile]{RIFF:\pause{} Resource Interchange File Format}
+\begin{frame}
+  \vspace{-1.5em}
+  \begin{center}
+    \Huge \texttt{RIFF}
+  \end{center}\pause
+
+  \Huge \textbf{R}esource\\
+  \textbf{I}nterchange \\
+  \textbf{F}ile \\
+  \textbf{F}ormat
 \end{frame}
 
-\begin{frame}{RIFF: Resource Interchange File Format}
-  \fitimage{riffstruct}
-  \source{\cite{loomisRIFFFileStructure2001}}
+\begin{frame}[fragile]{RIFF}
 \end{frame}
 
-\begin{frame}[fragile]{RIFF: Resource Interchange File Format}
+\newcommand{\chunkbox}{
+  \adjustbox{lap={\width}{1em}}{\bitbox{8}{Tag} \bitbox{8}{Size}}
+}
+\begin{frame}{RIFF}
+  \vspace{-2em}
+  \begin{figure}
+    \begin{bytefield}{16}
+      \bitbox{8}{Tag} \bitbox{8}{Size} \\
+      \begin{leftwordgroup}[curlyspace=0.5em]{Chunk}
+        \wordbox[lrt]{4}{
+          \chunkbox \\
+          \adjustbox{lap={\width}{1em}}{\wordbox{2}{Data}}
+        } \\
+        \wordbox[lr]{1}{\adjustbox{lap={\width}{1em}}{\Huge $\vdots$}} \\
+        % \skippedwords\\
+        \wordbox[lrb]{4}{
+          \chunkbox \\
+          \adjustbox{lap={\width}{1em}}{\wordbox{2}{Data}}
+        } \\
+      \end{leftwordgroup}
+    \end{bytefield}
+  \end{figure}
+\end{frame}
+
+\begin{frame}[fragile]{RIFF}
 \begin{lstlisting}[firstnumber=1, label=glabels, xleftmargin=10pt]
 typedef struct {
      char ckID[4];         // Unique chunk identifier
@@ -339,9 +376,9 @@ typedef struct {
 \end{lstlisting}
 \end{frame}
 
-\begin{frame}{RIFF: Resource Interchange File Format}
+\begin{frame}{RIFF}
   \begin{center}
-    In a RIFF file, the chunk IDs are often the only plain-text strings in the file.
+    \huge In a RIFF file, the chunk IDs are often the only plain-text strings in the file.
   \end{center}\pause
   \centerline{\texttt{\$ strings 100.cxt}}
 \end{frame}
