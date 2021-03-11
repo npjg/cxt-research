@@ -21,15 +21,24 @@
 \usepackage[T1]{fontenc}
 \usepackage{caption}
 \usepackage{forest}
-\usepackage{tcolorbox}
 \usepackage{verbatim}
 
+\usepackage{fancyvrb}
+\fvset{listparameters=\setlength{\topsep}{0pt}\setlength{\partopsep}{0pt}}
+
+\usepackage{colortbl}
+\newlength{\dumpcolsep}
+\setlength{\dumpcolsep}{1.5em}
+\setlength{\tabcolsep}{0pt}
+\newcolumntype{C}[1]{@{}>{\centering\arraybackslash}p{#1}@{}}
+\newcolumntype{D}{@{}>{\centering\arraybackslash}p{\dumpcolsep}@{}}
+
 \newcommand{\hexdump}[3]{
-  {\ttfamily\small
-  \begin{tabular}{@{}c|*{15}{c@{ }}c|l@{}}
+  {\ttfamily
+  \begin{tabular}{c@{ }|@{ }*{16}{D}@{ }|@{ }c}
     \input{dumps/#1}
   \end{tabular}}
-\source{\cite{#2}, \texttt{#3}}
+\source{\cite{#2}, \texttt{#3} }
 }
 
 % https://tex.stackexchange.com/questions/5073/making-a-simple-directory-tree
