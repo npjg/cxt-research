@@ -35,7 +35,7 @@
 
 \newcommand{\hexdump}[3]{
   {\ttfamily
-  \begin{tabular}{c@{ }|@{ }*{16}{D}@{ }|@{ }c}
+  \begin{tabular}{C{2.5em}|@{\hspace{0.1em}}*{16}{D}@{}|@{\hspace{0.35em}}*{16}{C{0.57em}}}
     \input{dumps/#1}
   \end{tabular}}
 \source{\cite{#2}, \texttt{#3} }
@@ -69,6 +69,7 @@
 % https://tex.stackexchange.com/questions/569923/conflict-of-resizebox-and-verbatim-mode
 \newsavebox{\tablebox}
 
+\setbeamersize{text margin left=7mm}
 \setbeamertemplate{section in toc}[sections numbered]
 \setbeamertemplate{subsection in toc}[subsections numbered]
 

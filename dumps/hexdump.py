@@ -18,6 +18,9 @@ def coordcompare(a, coord):
     else:
         raise ValueError("Unknwon coordinate type")
 
+def addcellcolor(color, elt):
+    return  " \\cellcolor{{{}}} {}".format(color, elt)
+
 def parselines(lines, coordinates=None):
     # Assumes the input file only contains LaTeX tabular rows (the interior of
     # the tabular environment), and that the format is [offset & byte1 & byte2 &
@@ -29,8 +32,11 @@ def parselines(lines, coordinates=None):
         if len(line) == 1:
             continue
 
-        processed_line = []
-        for j, byte in enumerate(line[1:-1]):
+        addr = line[0]
+        bytes = line[1:17]
+        chars = ["\\verb|{}|".format(letter) for letter in line[17:33]]
+
+        for j, byte in enumerate(bytes):
             spec = None
             for coord in coordinates:
                 if coordcompare(i, coord.get("i")):
@@ -38,9 +44,13 @@ def parselines(lines, coordinates=None):
                         spec = coord
                         break
 
-            processed_line.append((" \\cellcolor{{{}}}".format(spec.get("c", args.default_color)) if spec else "") + byte)
+            if spec:
+                bytes[j] = addcellcolor(spec.get("c", args.default_color), bytes[j])
+                if args.highlight_ascii:
+                    chars[j] = addcellcolor(spec.get("c", args.default_color), chars[j])
 
-        result.append("&".join([line[0], *processed_line, line[-1]]))
+
+        result.append("&".join([addr, *bytes, *chars]) + "\\\\")
                 
     return '\n'.join(result)
 
@@ -80,7 +90,7 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "-d", "--default_color", default="blue!25",
+        "-d", "--default_color", default="blue!40",
         help="The default color to use for coloring selected cell coordinates when a color is not provided in the coordinate."
     )
 
