@@ -288,9 +288,29 @@
 
 \section{Understand file formats}
 
+\begin{frame}{Files}
+  % https://tex.stackexchange.com/questions/23647/drawing-a-directory-listing-a-la-the-tree-command-in-tikz
+  \begin{figure}
+    \begin{forest}
+      [DALMATIANS
+      [DATA
+      [BOOT.STM,name=boot]
+      [100.CXT,name=startcxt] % Include dots here
+      [101.CXT]
+      [3983.CXT,name=endcxt]
+      [PROFILE.\textunderscore ST]
+      ] % Include dots here
+      [101\textunderscore ASB.EXE]]
+      \pause{}
+      \node[draw,line width=1mm,fit={(startcxt) (endcxt)},label={[label
+        distance=0.3cm]0:\huge Contexts}] {};
+    \end{forest}
+  \end{figure}
+\end{frame}
+
 \begin{frame}{Files}\pause
   \begin{center}
-    A \textbf{file} is a collection of bytes united under one name.\\\pause
+    \Large A \textbf{file} is a collection of bytes united under one name.\\\pause
     Each byte has a unique \textbf{address} -- its position in the file.\pause
   \end{center}\vspace{-1em}
   \begin{figure}
@@ -300,7 +320,7 @@
 
 \begin{frame}{Files}
   \begin{center}
-    A \textbf{file} is a collection of bytes united under one name.\\
+    \Large A \textbf{file} is a collection of bytes united under one name.\\
     Each byte has a unique \textbf{address} -- its position in the file.
   \end{center}\vspace{-1em}
   \begin{figure}
@@ -317,56 +337,40 @@
   \end{center}
 \end{frame}
 
-\begin{frame}{Files}
-  \begin{figure}
-    \hexdump{garage-117-0x00-0x80.2}{garage}{117.cxt}
-  \end{figure}
-  \begin{center}\pause
-    \Huge \texttt{0x09\,c7\,66} bytes\\ \pause
-    \huge \textbf{(little endian)}
-  \end{center}
-\end{frame}
-
-\begin{frame}
-  \vspace{-1.5em}
-  \begin{center}
-    \Huge \texttt{RIFF}
-  \end{center}\pause
-
-  \Huge \textbf{R}esource\\
-  \textbf{I}nterchange \\
-  \textbf{F}ile \\
-  \textbf{F}ormat
-\end{frame}
-
-\begin{frame}[fragile]{RIFF}
-\end{frame}
-
 \newcommand{\chunkbox}{
   \adjustbox{lap={\width}{1em}}{\bitbox{8}{Tag} \bitbox{8}{Size}}
 }
-\begin{frame}{RIFF}
-  \vspace{-2em}
-  \begin{figure}
-    \begin{bytefield}{16}
-      \bitbox{8}{Tag} \bitbox{8}{Size} \\
-      \begin{leftwordgroup}[curlyspace=0.5em]{Chunk}
-        \wordbox[lrt]{4}{
-          \chunkbox \\
-          \adjustbox{lap={\width}{1em}}{\wordbox{2}{Data}}
-        } \\
-        \wordbox[lr]{1}{\adjustbox{lap={\width}{1em}}{\Huge $\vdots$}} \\
-        % \skippedwords\\
-        \wordbox[lrb]{4}{
-          \chunkbox \\
-          \adjustbox{lap={\width}{1em}}{\wordbox{2}{Data}}
-        } \\
-      \end{leftwordgroup}
-    \end{bytefield}
-  \end{figure}
+\begin{frame}{\texttt{RIFF}}\pause
+  \vspace{-1.5em}
+  \begin{columns}
+    \begin{column}{0.3\textwidth}
+      \Huge \textbf{R}esource\\
+      \textbf{I}nterchange \\
+      \textbf{F}ile \\
+      \textbf{F}ormat
+    \end{column}\pause
+    \begin{column}{0.7\textwidth}
+      \begin{figure}
+        \begin{bytefield}{16}
+          \begin{leftwordgroup}[curlyspace=0.5em]{File}
+            \bitbox{8}{Tag} \bitbox{8}{Size} \\
+            \begin{rightwordgroup}[curlyspace=1em]{Chunk}
+              \chunkbox \\
+              \adjustbox{lap={\width}{1em}}{\wordbox{2}{Data}}
+            \end{rightwordgroup} \\
+            \wordbox[]{1}{{\adjustbox{lap={\width}{1em}}{\Huge $\vdots$}}}\vspace{0.5em} \\
+            \begin{rightwordgroup}[curlyspace=1em]{Chunk}
+              \chunkbox \\
+              \adjustbox{lap={\width}{1em}}{\wordbox{2}{Data}}
+            \end{rightwordgroup}
+          \end{leftwordgroup}
+        \end{bytefield}
+      \end{figure}
+    \end{column}
+  \end{columns}
 \end{frame}
 
-\begin{frame}[fragile]{RIFF}
+\begin{frame}[fragile]{\texttt{RIFF}}
 \begin{lstlisting}[firstnumber=1, label=glabels, xleftmargin=10pt]
 typedef struct {
      char ckID[4];         // Unique chunk identifier
@@ -376,47 +380,40 @@ typedef struct {
 \end{lstlisting}
 \end{frame}
 
-\begin{frame}{RIFF}
-  \begin{center}
-    \huge In a RIFF file, the chunk IDs are often the only plain-text strings in the file.
-  \end{center}\pause
-  \centerline{\texttt{\$ strings 100.cxt}}
+\begin{frame}{Files}
+  \begin{figure}
+    \only<1-3>{\hexdump{garage-117-0x00-0x80.2}{garage}{117.cxt}}
+    \only<4>{\hexdump{garage-117-0x00-0x80.3}{garage}{117.cxt}}
+    \only<5>{\hexdump{garage-117-0x00-0x80.4}{garage}{117.cxt}}
+  \end{figure}
+  \only<1-4>{
+    \begin{center}\pause
+      \Huge \texttt{0x09\,c7\,66} bytes\\ \pause
+      \huge \textbf{(little endian)}
+    \end{center}
+  }
+  \only<5>{
+    \begin{center}
+      \Huge What's in there?\\
+      \huge \textbf{\texttt{igod}?}
+    \end{center}
+  }
 \end{frame}
 
-\begin{frame}{CD-ROM Structure}
-  % https://tex.stackexchange.com/questions/23647/drawing-a-directory-listing-a-la-the-tree-command-in-tikz
-  \begin{figure}
-    \begin{forest}
-      [DALMATIANS
-      [DATA
-      [BOOT.STM,name=boot]
-      [100.CXT,name=startcxt] % Include dots here
-      [101.CXT]
-      [3983.CXT,name=endcxt]
-      [PROFILE.\textunderscore ST]
-      ] % Include dots here
-      [101\textunderscore ASB.EXE]]
-      \pause{}
-      \node[draw,line width=1mm,fit={(startcxt) (endcxt)},label={[label
-        distance=0.3cm]0:\Large Contexts}] {};
-    \end{forest}
-  \end{figure}
-\end{frame}
-
-\begin{frame}{Context Structure}
-  \begin{figure}
-    \begin{forest}
-      [100.CXT
-      [RIFF
-      [igod] % Include dots here
-      [a001]] % Include dots here
-      [RIFF
-      [a100]] % Include dots here
-      [RIFF
-      [a200]]]
-    \end{forest}
-  \end{figure}
-\end{frame}
+% \begin{frame}{Files}
+%   \begin{figure}
+%     \begin{forest}
+%       [100.CXT
+%       [RIFF
+%       [igod] % Include dots here
+%       [a001]] % Include dots here
+%       [RIFF
+%       [a100]] % Include dots here
+%       [RIFF
+%       [a200]]]
+%     \end{forest}
+%   \end{figure}
+% \end{frame}
 
 \section{Parse data structures}
 
