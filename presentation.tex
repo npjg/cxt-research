@@ -1,13 +1,13 @@
 % https://tex.stackexchange.com/questions/27351/speed-up-beamer-compile-time
 
 \documentclass[xcolor={dvipsnames,table},aspectratio=169]{beamer}
-% \includeonlyframes{current}
+% \includeonlyframes{assets}
 
 \graphicspath{{graphics/}}
 
 \title{Reviving the Media Station:\\A Study in Reverse Engineering}
 \author{Nathanael Gentry}
-\institute{School of Engineering}
+% \institute{}
 \date{April 13, 2021}
 
 \usepackage{listings}
@@ -124,7 +124,8 @@
 \setbeamercolor*{block title alerted}{parent=alerted text,bg=black!15}
 \setbeamercolor*{block title example}{parent=example text,bg=black!15}
 
-\usebackgroundtemplate{\includegraphics[width=\paperwidth,height=\paperheight]{demossblue}}
+\definecolor{LUDarkBlue}{HTML}{001132}
+\setbeamercolor{background canvas}{bg=LUDarkBlue}
 
 % https://tex.stackexchange.com/questions/411313/using-listings-package-with-beamer-block-environments-for-displaying-source-code
 % \usepackage{listings}
@@ -141,7 +142,7 @@
 \setbeamercolor{framesource}{fg=gray}
 \setbeamerfont{framesource}{size=\footnotesize}
 
-\newcommand{\source}[1]{\begin{textblock*}{4cm}(11.5cm,8cm)
+\newcommand{\source}[1]{\begin{textblock*}{4cm}(11.5cm,8.1cm)
     \begin{beamercolorbox}[ht=0.5cm,right]{framesource}
         \usebeamerfont{framesource}\usebeamercolor[fg]{framesource} Source: {#1}
     \end{beamercolorbox}
@@ -176,17 +177,19 @@
 {
     \begin{frame}
         \frametitle{Reverse Engineering Process}
-        \Large \tableofcontents[currentsection]
+        \Large{\tableofcontents[currentsection]}
     \end{frame}
 }
 
 \renewcommand{\figurename}{}
 
 \begin{document}
+{
+  \usebackgroundtemplate{\includegraphics[width=\paperwidth,height=\paperheight]{demossblue}}
+  \frame{\titlepage}
+}
 
-\frame{\titlepage}
-
-\usebackgroundtemplate{\includegraphics[width=\paperwidth,height=\paperheight]{solidbluenolu}}
+% \usebackgroundtemplate{\includegraphics[width=\paperwidth,height=\paperheight]{solidbluenolu}}
 \frame{}
 
 \begin{frame}
@@ -232,7 +235,7 @@
 
 \newcommand{\github}{\begin{frame}
   \fitimage{seuss2}
-  \vspace{-1.5em}
+  \vspace{-2em}
   \begin{center}
     \huge \url{https://npjg.github.io}
   \end{center}
@@ -298,7 +301,7 @@
 \end{frame}
 
 \begin{frame}{Reverse Engineering Process}\pause
-  \tableofcontents[pausesections]
+  \Large \tableofcontents[pausesections]
 \end{frame}
 
 \begin{frame}{Bytes}\pause
@@ -459,9 +462,9 @@ typedef struct {
   \begin{figure}
     \hexdump{#1.#2}{#3}{#4}
   \end{figure}
-  \begin{textblock*}{1cm}(15cm,1.5cm)
-    \tiny{Header: #1.#2}
-  \end{textblock*}
+  % \begin{textblock*}{1cm}(15cm,1.5cm)
+  %   \tiny{Header: #1.#2}
+  % \end{textblock*}
 }
 
 \newcommand{\imageheader}[1]{
@@ -595,7 +598,7 @@ class DatumType(IntEnum):
   \only<9-10>{\imageheader{16}}
   \only<11>{\imageheader{17}}
   \only<12>{\imageheader{18}}
-  \only<13-15>{\imageheader{20}}
+  \only<13-17>{\imageheader{20}}
   \begin{center}\pause
     \Large ``Background''\pause{} $\implies$\pause{} Full-screen $\implies$\pause{} VGA Graphics $\implies$\pause{}
     $640\times 480$
@@ -616,14 +619,14 @@ class DatumType(IntEnum):
       \LARGE \textbf{Point}: $(x, y)$
     \end{center}
   }
-  \only<13,15>{
+  \only<13,17>{
     \begin{center}
       \LARGE $(0, 0)$;\pause{} $(640, 480)$
     \end{center}
   }
-  \only<14>{
+  \onslide<14-16>{
     \begin{center}
-      \LARGE \textbf{Bounding box}: left, top; width, height.
+      \LARGE \textbf{Bounding box}:\onslide<15-16>{ left, top;}\onslide<16>{ width, height.}
     \end{center}
   }
 \end{overlayarea}
@@ -633,9 +636,9 @@ class DatumType(IntEnum):
 
 \againframe<11->{discover1}
 
-\newcommand{\soundheader}[1]{
-  \headerinternal{garage-117-0x2c26-0x72}{#1}{garage}{117.cxt}
-}
+% \newcommand{\soundheader}[1]{
+%   \headerinternal{garage-117-0x2c26-0x72}{#1}{garage}{117.cxt}
+% }
 
 % \begin{frame}{Structures}
 %   \soundheader{0}
@@ -753,17 +756,18 @@ class AssetType(IntEnum):
   \only<19>{\rledata{9}}
   \only<20-21>{\rledata{10}}
   \begin{overlayarea}{\textwidth}{0.3\textheight}
-    \vspace{-1em}
+    \vspace{-3em}
     \only<5-9>{
+      \vspace{2em}
       \begin{figure}
         \includegraphics{bad}
       \end{figure}
     }
-    \only<6-9>{
-      \vspace{-1.5em}
+    \onslide<6-9>{
+      \vspace{-1.8em}
       \begin{center}
-        \LARGE $\only<6-10>{\texttt{0x00f8}} \only<7-9>{\times \texttt{0x00c9}}
-        \only<8-9>{ = \texttt{0xc2b8} } \only<9>{ < \texttt{0x298e}}$
+        \LARGE $\onslide<6-10>{\texttt{0x00f8}} \onslide<7-9>{\times \texttt{0x00c9}}
+        \onslide<8-9>{ = \texttt{0xc2b8} } \onslide<9>{ \ll \texttt{0x298e}}$
       \end{center}
     }
     \only<10-11>{
@@ -772,6 +776,7 @@ class AssetType(IntEnum):
       \end{figure}
     }
     \only<12>{
+      % \vspace{-2em}
       \begin{figure}
         \includegraphics[height=0.2\textheight]{flagtop1}
       \end{figure}
@@ -799,7 +804,7 @@ class AssetType(IntEnum):
     \only<15>{
       \begin{table}
         \LARGE
-        \begin{tabular}{c@{ }|@{ }c@{ }|@{ }c@{ }|}
+        \begin{tabular}{c@{ }|@{ }c@{ }|@{ }c@{ }}
           \texttt{00 00} & \texttt{00 03} & \texttt{76 00} \\
           \hline
           New row & Encoding & Offset
@@ -814,7 +819,7 @@ class AssetType(IntEnum):
     \only<17>{
       \begin{table}
         \LARGE
-        \begin{tabular}{c@{ }|@{ }c@{ }|}
+        \begin{tabular}{c@{ }|@{ }c@{ }}
           \texttt{00 04} & \texttt{fe fe fe 55} \\
           \hline
           Raw length & Data
@@ -840,10 +845,9 @@ class AssetType(IntEnum):
 \end{frame}
 
 \begin{frame}{Assets}
-  % \fitimage{172}
   \begin{figure}
-    \only<1>{\includegraphics{172}}
-    \only<2>{\includegraphics{flagtop}}
+    \only<1>{\includegraphics[scale=1]{172.png}}
+    \only<2>{\includegraphics[height=0.2\textheight]{flagtop}}
   \end{figure}
 \end{frame}
 
@@ -962,7 +966,7 @@ class Movie(Object):
     \LARGE
   \item \texttt{``Display asset 119.''}\pause
   \item \texttt{``When asset 119 is clicked, play movie 202 at its location.''}\pause
-  \item \texttt{``When movie 202 finishes, play asset 120.''}\pause
+  \item \texttt{``When movie 202 finishes, play asset 120.''}
   \end{enumerate}
 \end{frame}
 
@@ -980,11 +984,17 @@ class Movie(Object):
   \source{\cite{ScummVM}}
 \end{frame}
 
+\begin{frame}
+  \begin{figure}
+    \includegraphics[height=0.5\textheight]{seuss2}
+  \end{figure}\pause
+  \begin{center}
+    \huge \url{https://github.com/npjg/cxt} \\\pause
+    \url{https://github.com/npjg/cxt-research}
+  \end{center}
+\end{frame}
+
 \frame{\titlepage}
-
-% Info about the bytecode
-
-% Repeat the title slide
 
 \begin{frame}[allowframebreaks]{References}
   \bibliographystyle{IEEEtran}
