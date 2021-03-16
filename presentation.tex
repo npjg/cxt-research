@@ -46,7 +46,7 @@
 
 \newcommand{\hexdump}[3]{
   {\ttfamily
-  \begin{tabular}{C{2.5em}|@{\hspace{0.1em}}*{16}{D}@{}|@{\hspace{0.35em}}*{16}{C{0.57em}}}
+  \begin{tabular}{c@{ }|@{\hspace{0.1em}}*{16}{D}@{}|@{\hspace{0.35em}}*{16}{C{0.57em}}}
     \input{dumps/#1}
   \end{tabular}}
 \source{\cite{#2}, \texttt{#3} }
@@ -241,7 +241,7 @@
 
 \begin{frame}[label=msitrans]
   \fitimage{msitrans}
-  \source{\cite{DisneyAnimatedStoryBook1996}}
+  \source{\cite{dalmatians}}
 \end{frame}
 
 \begin{frame}
@@ -262,7 +262,7 @@
 
 \begin{frame}
   \fitimage{dalmatians-demo}
-  \source{\cite{DisneyAnimatedStoryBook1996}, \cite{AnimatedStoryBook101}}
+  \source{\cite{dalmatians}, \cite{AnimatedStoryBook101}}
 \end{frame}
 
 \againframe{msitrans}
@@ -298,7 +298,7 @@
 \end{frame}
 
 \begin{frame}{Reverse Engineering Process}\pause
-  \LARGE \tableofcontents[pausesections]
+  \tableofcontents[pausesections]
 \end{frame}
 
 \begin{frame}{Bytes}\pause
@@ -375,6 +375,7 @@
   \begin{figure}
     \hexdump{garage-117-0x00-0x80.1}{garage}{117.cxt}
   \end{figure}
+  \vspace{0.5em}
   \begin{center}
     \Huge \texttt{RIFF}
   \end{center}
@@ -427,7 +428,7 @@ typedef struct {
   \begin{figure}
     \only<1-3>{\hexdump{garage-117-0x00-0x80.2}{garage}{117.cxt}}
     \only<4>{\hexdump{garage-117-0x00-0x80.3}{garage}{117.cxt}}
-    \only<5>{\hexdump{garage-117-0x00-0x80.4}{garage}{117.cxt}}
+    \only<5-6>{\hexdump{garage-117-0x00-0x80.4}{garage}{117.cxt}}
   \end{figure}
   \begin{overlayarea}{\textwidth}{0.3\textheight}
     \only<1-4>{
@@ -436,10 +437,10 @@ typedef struct {
         \huge \textbf{(little endian)}
       \end{center}
     }
-    \only<5>{
+    \onslide<5-6>{
       \begin{center}
         \Huge What's in there?\\
-        \huge \textbf{\texttt{igod}?}
+        \onslide<6>{\huge \textbf{\texttt{igod}?}}
       \end{center}
     }
   \end{overlayarea}
@@ -738,45 +739,48 @@ class AssetType(IntEnum):
   \headerinternal{garage-110-0x4b9f4-0x60}{#1}{garage}{110.cxt}
 }
 
-\begin{frame}<-6>[label=assets]{Assets}
+\begin{frame}<-9>[label=assets]{Assets}
   \foreach\x in {0,1,2,3}{
     \only<\x>{\rledata{\x}}
   }
-  \only<4-7>{\rledata{4}}
-  \only<8-11>{\rledata{5}}
-  \only<12>{\rledata{6}}
-  \only<13-14>{\rledata{7}}
-  \only<15>{\rledata{8}}
-  \only<16>{\rledata{9}}
-  \only<17-18>{\rledata{10}}
+  \only<4-5>{\rledata{4}}
+  \only<6-8>{\rledata{3}}
+  \only<9>{\rledata{4}}
+  \only<10-14>{\rledata{5}}
+  \only<15>{\rledata{6}}
+  \only<16-17>{\rledata{7}}
+  \only<18>{\rledata{8}}
+  \only<19>{\rledata{9}}
+  \only<20-21>{\rledata{10}}
   \begin{overlayarea}{\textwidth}{0.3\textheight}
     \vspace{-1em}
-    \only<5-6>{
+    \only<5-9>{
       \begin{figure}
         \includegraphics{bad}
       \end{figure}
     }
-    \only<6>{
+    \only<6-9>{
       \vspace{-1.5em}
       \begin{center}
-        \LARGE $\texttt{0x00f8} \times \texttt{0x00c9} = \texttt{0xc2b8} > \texttt{0x298e}$
+        \LARGE $\only<6-10>{\texttt{0x00f8}} \only<7-9>{\times \texttt{0x00c9}}
+        \only<8-9>{ = \texttt{0xc2b8} } \only<9>{ < \texttt{0x298e}}$
       \end{center}
     }
-    \only<7-8>{
+    \only<10-11>{
       \begin{figure}
         \includegraphics[height=0.2\textheight]{flagtop}
       \end{figure}
     }
-    \only<9>{
+    \only<12>{
       \begin{figure}
         \includegraphics[height=0.2\textheight]{flagtop1}
       \end{figure}
-      \vspace{-2em}
+      \vspace{-2.5em}
       \begin{center}
         \Huge $17\equiv \texttt{0x11}$ pixels wide
       \end{center}
     }
-    \only<10>{
+    \only<13>{
       \begin{table}
         \LARGE
         \begin{tabular}{c@{ }|@{ }c@{ }|@{ }c@{ }|@{ }c@{ }|@{ }c@{ }}
@@ -786,13 +790,13 @@ class AssetType(IntEnum):
         \end{tabular}
       \end{table}
     }
-    \only<11,18>{
+    \only<14,21>{
       \vspace{2em}
       \begin{center}
         \Huge \textbf{R}un \textbf{L}ength \textbf{E}ncoding \Large (\textbf{RLE})
       \end{center}
     }
-    \only<12>{
+    \only<15>{
       \begin{table}
         \LARGE
         \begin{tabular}{c@{ }|@{ }c@{ }|@{ }c@{ }|}
@@ -802,12 +806,12 @@ class AssetType(IntEnum):
         \end{tabular}
       \end{table}
     }
-    \only<13>{
+    \only<16>{
       \begin{figure}
         \includegraphics[height=0.2\textheight]{flagtop2}
       \end{figure}
     }
-    \only<14>{
+    \only<17>{
       \begin{table}
         \LARGE
         \begin{tabular}{c@{ }|@{ }c@{ }|}
@@ -817,17 +821,17 @@ class AssetType(IntEnum):
         \end{tabular}
       \end{table}
     }
-    \only<15>{
+    \only<18>{
       \begin{figure}
         \includegraphics[height=0.2\textheight]{flagtop3}
       \end{figure}
     }
-    \only<16>{
+    \only<19>{
       \begin{figure}
         \includegraphics[height=0.2\textheight]{flagtop4}
       \end{figure}
     }
-    \only<17>{
+    \only<20>{
       \begin{figure}
         \includegraphics[height=0.2\textheight]{flagtop5}
       \end{figure}
@@ -843,7 +847,7 @@ class AssetType(IntEnum):
   \end{figure}
 \end{frame}
 
-\againframe<7->{assets}
+\againframe<10->{assets}
 
 \begin{frame}
   \vspace{-1em}
@@ -962,7 +966,11 @@ class Movie(Object):
   \end{enumerate}
 \end{frame}
 
-\againframe<2>{func}
+\begin{frame}
+  \bcdata{0}
+\end{frame}
+
+\againframe{msitrans}
 
 \begin{frame}
   \fitimage{scummvm}\pause
