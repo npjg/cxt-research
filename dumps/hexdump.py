@@ -15,8 +15,10 @@ def coordcompare(a, coord):
         return a in range(coord[0], coord[1] + 1)
     elif isinstance(coord, int):
         return a == coord
+    # elif coord == "prev":
     else:
-        raise ValueError("Unknwon coordinate type")
+        return False
+        # raise ValueError("Unknwon coordinate type")
 
 def addcellcolor(color, elt):
     return  " \\cellcolor{{{}}} {}".format(color, elt)
@@ -54,6 +56,10 @@ def parselines(lines, coordinates=None):
                 
     return '\n'.join(result)
 
+# def matchprevs(dumpp):
+#     if len(coords) >= 1 and coords[0].get("z") == "prev":
+#         coords = coords[1:].append(matchprevs
+
 def parsedump(dump):
     try:
         lines = subprocess.run(
@@ -73,8 +79,17 @@ def parsedump(dump):
     )
 
     for n, perm in enumerate(dump["p"]):
-        with open(os.path.join(args.outputdir, "{}.{}.tex".format(name, n)), 'w') as o:
-            o.write(parselines(lines, coordinates=perm))
+        if isinstance(perm, list):
+            coords = perm
+        else:
+            coords = perm.get("points", [])
+            for i in range (n-1, 0, -1):
+                if dump["p"][i+1].get("prior") == True:
+                    coords = dump["p"][i]["points"] + coords
+
+        with open(os.path.join(args.outputdir, "{}.{}.tex".format(name, n)), 'w') as out:
+            out.write(parselines(lines, coordinates=coords))
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
