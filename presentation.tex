@@ -13,16 +13,27 @@
 \usepackage{listings}
 \lstset{basicstyle=\ttfamily, keywordstyle=\bfseries, language=Python, escapeinside={(*}{*)}}
 
+\usepackage{amsmath}
 \usepackage{lmodern}
+
+% https://tex.stackexchange.com/questions/107042/beamer-overlay-box-around-text-the-correct-way
+% \usetikzlibrary{calc}
+% \newcommand{\tikzmark}[1]{\tikz[overlay,remember picture] \node (#1) {};}
+
+\usepackage{tikz}
+\usetikzlibrary{decorations.pathreplacing,calc,shapes,positioning,tikzmark}
+% \newcommand\tbox[1]{\tikz[baseline]{\node[inner sep=2pt, draw=red, ultra thick, anchor=text, rectangle] {#1};}}
 
 % https://stackoverflow.com/questions/1346512/to-escape-many-in-latex-efficiently
 \usepackage{underscore}
 
 \usepackage[T1]{fontenc}
 \usepackage{caption}
-\usepackage{forest}
-\usepackage{verbatim}
 
+\usepackage{forest}
+\usepackage{bytefield}
+
+\usepackage{verbatim}
 \usepackage{fancyvrb}
 \fvset{listparameters=\setlength{\topsep}{0pt}\setlength{\partopsep}{0pt}}
 
@@ -44,7 +55,7 @@
 % https://tex.stackexchange.com/questions/5073/making-a-simple-directory-tree
 \forestset{%
   default preamble={for tree={%
-      font=\ttfamily, %
+      font=\ttfamily\LARGE, %
       grow'=0, %
       child anchor=west, %
       parent anchor=south, %
@@ -72,6 +83,7 @@
 \setbeamersize{text margin left=7mm}
 \setbeamertemplate{section in toc}[sections numbered]
 \setbeamertemplate{subsection in toc}[subsections numbered]
+\setbeamertemplate{footline}{}
 
 % ~~~~~ LIGHT THEME ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 % \usetheme{Berkeley}
@@ -163,8 +175,8 @@
 \AtBeginSection[]
 {
     \begin{frame}
-        \frametitle{Reverse-Engineering Process}
-        \tableofcontents[currentsection]
+        \frametitle{Reverse Engineering Process}
+        \Large \tableofcontents[currentsection]
     \end{frame}
 }
 
@@ -227,50 +239,81 @@
 \end{frame}}
 \github
 
+\begin{frame}[label=msitrans]
+  \fitimage{msitrans}
+  \source{\cite{DisneyAnimatedStoryBook1996}}
+\end{frame}
+
 \begin{frame}
   \fitimage{asblogo}
   \source{\cite{DisneyAnimatedStoryBook2020}}
 \end{frame}
 
 \begin{frame}
-  \fitimage{msitrans}
-  \source{\cite{flurryDisneyAnimatedStoryBook1994}}
+  \fitimage{overlay.png}
+  % \tikz[overlay,remember picture]
+  % \node[anchor=north east] at (0, 1) {
+  %   \includegraphics{lionking}
+  % };
+  \source{\cite{AnimatedStoryBook101}, \cite{AnimatedStoryBookWinnie},
+    \cite{AnimatedStoryBookLion}, \cite{AnimatedStoryBookHercules},
+    \cite{AnimatedStoryBookPocahontas}}
 \end{frame}
 
 \begin{frame}
-\begin{center}
-  ``I lost my copy of the source many years ago when a backup drive failed. I was
-  hoping to do a similar thing to what ScummVM does...''
-\end{center}
+  \fitimage{dalmatians-demo}
+  \source{\cite{DisneyAnimatedStoryBook1996}, \cite{AnimatedStoryBook101}}
 \end{frame}
+
+\againframe{msitrans}
+
+\begin{frame}
+  \fitimage{overlay2.png}
+  \source{\cite{AmazonComTonka}, \cite{AmazonComTonkab},
+    \cite{AmazonComTonkaa}, \cite{PickyEaterPC}}
+\end{frame}
+
+% \begin{frame}
+% \begin{center}
+%   ``I lost my copy of the source many years ago when a backup drive failed. I was
+%   hoping to do a similar thing to what ScummVM does...''
+% \end{center}
+% \end{frame}
 
 \begin{frame}{Research Question}\pause
   \begin{center}
-    \huge
-    How can an interactive multimedia format be reverse-engineered from scratch?
+    \huge How can an interactive multimedia format be reverse engineered from scratch?
   \end{center}
 \end{frame}
 
 % To show how I have begun answering this question...
 
-\begin{frame}{Reverse-Engineering Process}
-  \tableofcontents
+\begin{frame}{Reverse Engineering}\pause
+  \begin{center}
+    \Large In reverse engineering,\\ ``One attempts to understand \textbf{through deductive
+    reasoning} how a [system] accomplishes a task with very little... insight into
+    exactly how it does so.''
+  \end{center}
+  \source{\cite{ReverseEngineering2021}}
+\end{frame}
+
+\begin{frame}{Reverse Engineering Process}\pause
+  \LARGE \tableofcontents[pausesections]
 \end{frame}
 
 \begin{frame}{Bytes}\pause
+  \Large
 \begin{itemize}
   \item \textbf{Base-10} (decimal) uses 10 digits --\pause{} the numbers 0-9.\\\pause
   \item \textbf{Base-2} (binary) uses 2 digits --\pause{} the bits \texttt{0} and \texttt{1}.\\\pause
   \item \textbf{Base-16} (hexadecimal) uses 16 digits --\pause{} the numbers 0-9\pause{} and
-    letters A-F.
+    \centerline{\LARGE \hspace{-2em} \textbf{letters \texttt{A}-\texttt{F}}.}
 \end{itemize}
 \end{frame}
 
 \begin{frame}{Bytes}\pause
   \begin{center}
-    \large
-
-    A \textbf{byte} is a collection of 8 bits.\\\pause
+    \Large A \textbf{byte} is a collection of 8 bits.\\\pause
     Each byte represents a value from $0 = (2^0 - 1)$\pause{} to $255 = (2^8 - 1)$.\pause
 
     \vspace{1em}
@@ -386,21 +429,103 @@ typedef struct {
     \only<4>{\hexdump{garage-117-0x00-0x80.3}{garage}{117.cxt}}
     \only<5>{\hexdump{garage-117-0x00-0x80.4}{garage}{117.cxt}}
   \end{figure}
-  \only<1-4>{
-    \begin{center}\pause
-      \Huge \texttt{0x09\,c7\,66} bytes\\ \pause
-      \huge \textbf{(little endian)}
-    \end{center}
-  }
-  \only<5>{
-    \begin{center}
-      \Huge What's in there?\\
-      \huge \textbf{\texttt{igod}?}
-    \end{center}
-  }
+  \begin{overlayarea}{\textwidth}{0.3\textheight}
+    \only<1-4>{
+      \begin{center}\pause
+        \Huge \texttt{0x09\,c7\,66} bytes\\ \pause
+        \huge \textbf{(little endian)}
+      \end{center}
+    }
+    \only<5>{
+      \begin{center}
+        \Huge What's in there?\\
+        \huge \textbf{\texttt{igod}?}
+      \end{center}
+    }
+  \end{overlayarea}
 \end{frame}
 
-% \begin{frame}{Files}
+\section{Parse data structures}
+
+\begin{frame}{Structures}\pause
+  \fitimage{garage}
+  \source{\cite{AmazonComTonka}}
+\end{frame}
+
+% Don't change the space with highlighting:
+% https://tex.stackexchange.com/questions/198931/color-overshoots-when-using-cellcolor-without-intercolumn-space
+\newcommand{\headerinternal}[4]{
+  \begin{figure}
+    \hexdump{#1.#2}{#3}{#4}
+  \end{figure}
+  \begin{textblock*}{1cm}(15cm,1.5cm)
+    \tiny{Header: #1.#2}
+  \end{textblock*}
+}
+
+\newcommand{\imageheader}[1]{
+  \headerinternal{garage-117-0x2200-0xa0}{#1}{garage}{117.cxt}
+}
+
+\newcommand{\imagedata}[1]{
+  \headerinternal{garage-117-0x4a80e-0x60}{#1}{garage}{117.cxt}
+}
+
+\begin{frame}[label=header]{Structures}
+  \foreach\x in {0,1,2,3,4,5,6,7,8,9} {
+    \pgfmathtruncatemacro{\jn}{\x+1}%
+    \only<\jn>{\imageheader{\x}}
+  }
+  \only<11>{\imageheader{9}}
+  \only<12-17>{\imageheader{10}}
+  \only<18>{\imageheader{11}}
+  \only<19>{\imageheader{12}}
+  \only<20>{\imageheader{13}}
+  \only<21-22,24-25>{\imageheader{14}}
+  \only<23>{\imagedata{1}}
+
+  \begin{overlayarea}{\textwidth}{0.2\textheight}
+    \only<10-11>{
+      \begin{center}
+        \Huge \texttt{03 00}\only<11>{: \texttt{uint16}}
+      \end{center}
+    }
+    \only<13>{
+      \begin{center}
+        \Huge \texttt{img_7xn1_background}
+      \end{center}
+    }
+    \only<14>{
+      \vspace{-1em}
+      \begin{center}
+        \Large \texttt{img_7xn1_background} \\
+        \Huge $19\equiv \texttt{0x13}$
+      \end{center}
+    }
+    \only<15-16>{
+      \begin{center}
+        \Huge \texttt{04 00}\only<16>{: \texttt{uint32}}
+      \end{center}
+    }
+    \only<17>{
+      \begin{center}
+        \Huge \texttt{12 00}: \texttt{string}
+      \end{center}
+    }
+    \only<22-24>{
+      \begin{center}
+        \Huge \texttt{a0a5}
+      \end{center}
+    }
+    \only<25>{
+      \begin{center}
+        \Huge \texttt{1b 00}: \texttt{ref}
+      \end{center}
+    }
+  \end{overlayarea}
+\end{frame}
+
+% \begin{frame}{Structures}
 %   \begin{figure}
 %     \begin{forest}
 %       [100.CXT
@@ -415,34 +540,10 @@ typedef struct {
 %   \end{figure}
 % \end{frame}
 
-\section{Parse data structures}
-
-% Don't change the space with highlighting:
-% https://tex.stackexchange.com/questions/198931/color-overshoots-when-using-cellcolor-without-intercolumn-space
-\newcommand{\imageheader}[1]{
-  \begin{figure}
-    \hexdump{garage-117-0x2200-0xa0.#1}{garage}{117.cxt}
-  \end{figure}
-}
-
-\foreach\x in {0,1,2,3,4,5,6,7,8,9,10}{
-  \begin{frame}{Data Structures}
-    \imageheader{\x}
-  \end{frame}
-}
-
-% TODO: Replace this with the location of all 03 00 bytes.
-% I can implement a basic search parser.
-\begin{frame}{Data Structures}
-  \begin{figure}
-    \hexdump{garage-117-0x2200-0xa0.10}{garage}{117.cxt}
-  \end{figure}
+\begin{frame}[fragile]{Structures}\pause
   \begin{center}
-    Why are there so many \texttt{03 00} bytes?
+    \Large \textbf{datum}\pause{} (data):\pause{} a single piece of information.\pause
   \end{center}
-\end{frame}
-
-\begin{frame}[fragile]{Data Structures}\pause
 \begin{lstlisting}
 class DatumType(IntEnum):
     UINT8      = 0x0002,
@@ -454,13 +555,13 @@ class DatumType(IntEnum):
     REF        = 0x001b,
     BBOX       = 0x000d,
     POLY       = 0x001d
-\end{lstlisting}\pause
-  \begin{center}
-    \Large \textbf{datum}\pause{} (data):\pause{} a single piece of information.
-  \end{center}
+\end{lstlisting}
 \end{frame}
 
-\begin{frame}[fragile]{Data Structures}
+\begin{frame}[fragile]{Structures}
+  \begin{center}
+    \Large \textbf{datum} (data): a single piece of information.
+  \end{center}
 \begin{lstlisting}
 class DatumType(IntEnum):
     UINT8      = 0x0002,
@@ -473,78 +574,409 @@ class DatumType(IntEnum):
     BBOX       = 0x000d,
     POLY       = 0x001d
 \end{lstlisting}
+\end{frame}
+
+\begin{frame}[label=proverb]{Structures}
   \begin{center}
-    \Large \textbf{datum} (data): a single piece of information.
+    \LARGE In reverse engineering, your discoveries unexpectedly build upon themselves.
   \end{center}
 \end{frame}
 
-\begin{frame}{Data Structures}
+\newcommand{\ThoughtProcess}{
   \begin{center}
-    In reverse engineering, the discoveries you make build upon themselves dramatically.
-  \end{center}
-\end{frame}
-
-\begin{frame}[label=current]{Data Structures}
-  \imageheader{0}
-  \begin{center}
-    Background\pause{} $\implies$\pause{} Full-screen $\implies$\pause{} VGA Graphics $\implies$\pause{}
+    \large ``Background'' $\implies$ Full-screen $\implies$ VGA Graphics $\implies$
     $640\times 480$
-  \end{center}\pause\vspace{-1.5em}
-  \begin{center}
-    \LARGE $640\equiv \texttt{0x02\,80} \equiv \texttt{08 20}$
   \end{center}
-\end{frame}
-
-\begin{frame}[label=current]{Data Structures}
-  \imageheader{11}
-  \begin{center}
-    Background $\implies$ Full-screen $\implies$ VGA Graphics $\implies$
+}
+\begin{frame}<1-11>[label=discover1]{Structures}
+  \only<1-7>{\imageheader{0}}
+  \only<8>{\imageheader{15}}
+  \only<9-10>{\imageheader{16}}
+  \only<11>{\imageheader{17}}
+  \only<12>{\imageheader{18}}
+  \only<13-15>{\imageheader{20}}
+  \begin{center}\pause
+    \Large ``Background''\pause{} $\implies$\pause{} Full-screen $\implies$\pause{} VGA Graphics $\implies$\pause{}
     $640\times 480$
-  \end{center}\vspace{-1.5em}
-  \begin{center}
-    \LARGE $640\equiv \texttt{0x02\,80} \equiv \texttt{08 20}$
-  \end{center}
+  \end{center}\pause\vspace{-1em}
+  \begin{overlayarea}{\textwidth}{0.2\textheight}
+  \only<1-8>{
+    \begin{center}
+      \Huge $640\equiv \texttt{0x02\,80} \equiv \texttt{08 20}$
+    \end{center}
+  }
+  \only<9-10>{
+    \begin{center}
+      \only<10>{\Huge $480\equiv \texttt{0x01\,e0} \equiv \texttt{e0 01}$}
+    \end{center}
+  }
+  \only<11-12>{
+    \begin{center}
+      \LARGE \textbf{Point}: $(x, y)$
+    \end{center}
+  }
+  \only<13,15>{
+    \begin{center}
+      \LARGE $(0, 0)$;\pause{} $(640, 480)$
+    \end{center}
+  }
+  \only<14>{
+    \begin{center}
+      \LARGE \textbf{Bounding box}: left, top; width, height.
+    \end{center}
+  }
+\end{overlayarea}
 \end{frame}
 
-\begin{frame}[label=current]{Data Structures}
-  \imageheader{12}
-  \begin{center}
-    Background $\implies$ Full-screen $\implies$ VGA Graphics $\implies$
-    $640\times 480$
-  \end{center}\vspace{-1.5em}
-  \begin{center}
-    \LARGE $480\equiv \texttt{0x01\,e0} \equiv \texttt{e0 01}$
-  \end{center}
+\againframe{proverb}
+
+\againframe<11->{discover1}
+
+\newcommand{\soundheader}[1]{
+  \headerinternal{garage-117-0x2c26-0x72}{#1}{garage}{117.cxt}
+}
+
+% \begin{frame}{Structures}
+%   \soundheader{0}
+% \end{frame}
+
+\begin{frame}
+  % \fitimage{cxtcode}
+  \vspace{-1em}
+  \begin{figure}
+    \includegraphics[height=\textheight]{cxtcode}
+  \end{figure}
 \end{frame}
 
-\begin{frame}[label=current]{Data Structures}
-  \imageheader{13}
-  \begin{center}
-    Background $\implies$ Full-screen $\implies$ VGA Graphics $\implies$
-    $640\times 480$
-  \end{center}\vspace{-1.5em}\pause
-  \begin{center}
-    \Large Point: $(x, y)$
-  \end{center}
+\begin{frame}
+  \fitimage{cxtrepo}
 \end{frame}
 
-\begin{frame}[fragile,label=current]{Data Structures}
-\begin{figure}
-\begin{lstlisting}
-class Point(Object):
-    def __init__(self, m):
-        value_assert(m, b'\x10\x00')
-        self.x = struct.unpack("<H", m.read(2))[0]
-
-        value_assert(m, b'\x10\x00')
-        self.y = struct.unpack("<H", m.read(2))[0]
+\begin{frame}[fragile]{Structures}
+\begin{lstlisting}[basicstyle=\ttfamily\small]
+  "header": {
+    "filenum": 117,
+    "type": 7,
+    "id": 300,
+    "name": "img_7xn1_background",
+    "ref": ["a0a5"],
+    (*\tikzmark{a}*)"bbox": {
+      "point": {
+        "x": 0,
+        "y": 0
+      },
+      "dims": {
+        "x": 640,
+        "y": 480
+      }
+    },(*\tikzmark{b}*)
+    "z_index": 32000
+  }
 \end{lstlisting}
-\end{figure}
+  \only<2>{
+  \begin{tikzpicture}[remember picture,overlay]
+    \draw[red,rounded corners]
+     ([shift={(-1em,1em)}]pic cs:a)
+     rectangle
+     ([shift={(8em,-0.3em)}]pic cs:b);
+  \end{tikzpicture}}%
 \end{frame}
 
 \section{Extract game assets}
 
+\begin{frame}{Assets}
+  \only<1>{\imageheader{0}}
+  \only<2-3>{\imageheader{6}}
+  \begin{overlayarea}{\textwidth}{0.2\textheight}
+    \only<3>{\vspace{-1em}
+      \begin{center}
+      \Huge \texttt{07 00}
+    \end{center}}
+  \end{overlayarea}
+\end{frame}
+
+\begin{frame}[fragile]{Assets}
+\begin{lstlisting}
+class AssetType(IntEnum):
+    SCR  = 0x0001, # Screen
+    STG  = 0x0002, # Stage
+    PTH  = 0x0004, # Path
+    SND  = 0x0005, # Sound
+    TMR  = 0x0006, # Timer
+    IMG  = 0x0007, # Image
+    HSP  = 0x000b, # Hotspot
+    SPR  = 0x000e, # Sprite
+    MOV  = 0x0016, # Movie
+    PAL  = 0x0017, # Palette
+    FON  = 0x001b, # Font
+    FUN  = 0x0069, # Function
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Assets}
+  \foreach\x in {0,1,2,3}{
+    \only<\x>{\imagedata{\x}}
+  }
+  \only<4-5>{\imagedata{4}}
+  \only<6>{\imagedata{5}}
+  \only<7>{\imagedata{6}}
+  \begin{overlayarea}{\textwidth}{0.3\textheight}
+    \only<5-7>{
+      \begin{center}
+        \huge $640 \times 480 = 307\,200 \equiv \texttt{0x4b000}$ \\
+        \only<6-7>{$\texttt{00 b0 04 00}$}
+      \end{center}
+    }
+  \end{overlayarea}
+\end{frame}
+
+\begin{frame}{Assets}
+  \fitimage{300.png}
+\end{frame}
+
+\newcommand{\rledata}[1]{
+  \headerinternal{garage-110-0x4b9f4-0x60}{#1}{garage}{110.cxt}
+}
+
+\begin{frame}<-6>[label=assets]{Assets}
+  \foreach\x in {0,1,2,3}{
+    \only<\x>{\rledata{\x}}
+  }
+  \only<4-7>{\rledata{4}}
+  \only<8-11>{\rledata{5}}
+  \only<12>{\rledata{6}}
+  \only<13-14>{\rledata{7}}
+  \only<15>{\rledata{8}}
+  \only<16>{\rledata{9}}
+  \only<17-18>{\rledata{10}}
+  \begin{overlayarea}{\textwidth}{0.3\textheight}
+    \vspace{-1em}
+    \only<5-6>{
+      \begin{figure}
+        \includegraphics{bad}
+      \end{figure}
+    }
+    \only<6>{
+      \vspace{-1.5em}
+      \begin{center}
+        \LARGE $\texttt{0x00f8} \times \texttt{0x00c9} = \texttt{0xc2b8} > \texttt{0x298e}$
+      \end{center}
+    }
+    \only<7-8>{
+      \begin{figure}
+        \includegraphics[height=0.2\textheight]{flagtop}
+      \end{figure}
+    }
+    \only<9>{
+      \begin{figure}
+        \includegraphics[height=0.2\textheight]{flagtop1}
+      \end{figure}
+      \vspace{-2em}
+      \begin{center}
+        \Huge $17\equiv \texttt{0x11}$ pixels wide
+      \end{center}
+    }
+    \only<10>{
+      \begin{table}
+        \LARGE
+        \begin{tabular}{c@{ }|@{ }c@{ }|@{ }c@{ }|@{ }c@{ }|@{ }c@{ }}
+          \texttt{00 00} & \texttt{00 03} & \texttt{78 00} & \texttt{11} & \texttt{fe} \\
+          \hline
+          New row & Encoding & Offset & Run length & Color
+        \end{tabular}
+      \end{table}
+    }
+    \only<11,18>{
+      \vspace{2em}
+      \begin{center}
+        \Huge \textbf{R}un \textbf{L}ength \textbf{E}ncoding \Large (\textbf{RLE})
+      \end{center}
+    }
+    \only<12>{
+      \begin{table}
+        \LARGE
+        \begin{tabular}{c@{ }|@{ }c@{ }|@{ }c@{ }|}
+          \texttt{00 00} & \texttt{00 03} & \texttt{76 00} \\
+          \hline
+          New row & Encoding & Offset
+        \end{tabular}
+      \end{table}
+    }
+    \only<13>{
+      \begin{figure}
+        \includegraphics[height=0.2\textheight]{flagtop2}
+      \end{figure}
+    }
+    \only<14>{
+      \begin{table}
+        \LARGE
+        \begin{tabular}{c@{ }|@{ }c@{ }|}
+          \texttt{00 04} & \texttt{fe fe fe 55} \\
+          \hline
+          Raw length & Data
+        \end{tabular}
+      \end{table}
+    }
+    \only<15>{
+      \begin{figure}
+        \includegraphics[height=0.2\textheight]{flagtop3}
+      \end{figure}
+    }
+    \only<16>{
+      \begin{figure}
+        \includegraphics[height=0.2\textheight]{flagtop4}
+      \end{figure}
+    }
+    \only<17>{
+      \begin{figure}
+        \includegraphics[height=0.2\textheight]{flagtop5}
+      \end{figure}
+    }
+  \end{overlayarea}
+\end{frame}
+
+\begin{frame}{Assets}
+  % \fitimage{172}
+  \begin{figure}
+    \only<1>{\includegraphics{172}}
+    \only<2>{\includegraphics{flagtop}}
+  \end{figure}
+\end{frame}
+
+\againframe<7->{assets}
+
+\begin{frame}
+  \vspace{-1em}
+  \begin{figure}
+    \includegraphics[height=\textheight]{imagecode}
+  \end{figure}
+\end{frame}
+
+\begin{frame}
+  \begin{figure}
+    \includegraphics[height=\textheight]{85-0}
+  \end{figure}
+\end{frame}
+
+\begin{frame}{Assets}
+  \Large We haven't even begun discussing...
+  \begin{itemize}
+    \item Decoding sounds\pause
+    \item Extracting animation sequences\pause
+    \item Handling fonts and text\pause
+    \item Decompiling game bytecode
+  \end{itemize}
+\end{frame}
+
 \section{Write interactive engine}
+
+\newcommand{\bcdata}[1]{
+  \headerinternal{dalmatians-168-0x4b7c-0x94}{#1}{dalmatians}{168.cxt}
+}
+
+\begin{frame}[label=current,fragile]{Code}
+  % \vspace{-1em}
+  % \begin{center}
+  %   \huge Code
+  % \end{center}
+\begin{lstlisting}
+class Movie(Object):
+    def __init__(self, stream, header, chunk, stills=[]):
+        self.stills = stills
+        self.chunks = []
+
+        end = stream.tell() + chunk['size']
+        codes = {
+            "header": chunk_int(chunk),
+            "video" : chunk_int(chunk) + 1,
+            "audio" : chunk_int(chunk) + 2,
+        }
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}{Bytecode}
+  \bcdata{0}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \LARGE In bytecode, \\
+    \textbf{numbers take the place of words}.\pause
+  \end{center}
+  \begin{table}
+    \Large \begin{tabular}{@{ }c@{ }|@{ }c@{ }}
+      \textbf{Compile} \onslide<3>{& \textbf{Decompile}} \\
+      \hline
+      \texttt{Code}$\implies$ Bytecode \onslide<3>{& Bytecode $\implies$ \texttt{Code}}
+    \end{tabular}
+  \end{table}
+\end{frame}
+
+\begin{frame}[label=func]{Interactivity}
+    \only<2>{\bcdata{0}}
+    \only<3>{\bcdata{1}}
+\end{frame}
+
+\begin{frame}[fragile]{Interactivity}
+  \vspace{-3em}
+  \begin{center}
+    \begin{tabular}{c}
+\begin{lstlisting}[basicstyle=\fontsize{8}{9}\selectfont]
+{
+  "sz": 114,
+  "ch": [
+    {
+      "sz": 108,
+      "ch": [
+        [
+          202,
+          [207, [103], 4],
+          [156, 0]
+        ],
+        {
+          "sz": 20,
+          "ch": [
+            [
+              219, 119, 0
+            ],
+            0
+          ]
+        },
+        [220, 202, 0],
+        [103],
+      ]
+    }
+  ]
+}
+\end{lstlisting}
+    \end{tabular}
+\end{center}
+\end{frame}
+
+\begin{frame}{Pseudocode}\pause
+  \begin{enumerate}
+    \LARGE
+  \item \texttt{``Display asset 119.''}\pause
+  \item \texttt{``When asset 119 is clicked, play movie 202 at its location.''}\pause
+  \item \texttt{``When movie 202 finishes, play asset 120.''}\pause
+  \end{enumerate}
+\end{frame}
+
+\againframe<2>{func}
+
+\begin{frame}
+  \fitimage{scummvm}\pause
+  \begin{center}
+    \Huge To be continued...
+  \end{center}
+  \source{\cite{ScummVM}}
+\end{frame}
+
+\frame{\titlepage}
+
+% Info about the bytecode
+
+% Repeat the title slide
 
 \begin{frame}[allowframebreaks]{References}
   \bibliographystyle{IEEEtran}
