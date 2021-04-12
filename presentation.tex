@@ -8,7 +8,7 @@
 \title{Reviving the Media Station:\\A Study in Reverse Engineering}
 \author{Nathanael Gentry}
 % \institute{}
-\date{April 13, 2021}
+\date{April 12, 2021}
 
 \usepackage{listings}
 \lstset{basicstyle=\ttfamily, keywordstyle=\bfseries, language=Python, escapeinside={(*}{*)}}
@@ -279,7 +279,7 @@
 % \end{center}
 % \end{frame}
 
-\begin{frame}{Research Question}\pause
+\begin{frame}[label=question]{Research Question}\pause
   \begin{center}
     \huge How can an interactive multimedia format be reverse engineered from scratch?
   \end{center}
@@ -707,11 +707,16 @@ class AssetType(IntEnum):
 
 \begin{frame}[label=assets]{Assets}
   \only<1>{\rledata{2}}
-  \only<2>{\rledata{4}}
-  \only<3>{\rledata{5}}
-  \only<4-5>{\rledata{10}}
+  \only<2-3>{\rledata{4}}
+  \only<4>{\rledata{5}}
+  \only<5-6>{\rledata{10}}
   \begin{overlayarea}{\textwidth}{0.2\textheight}
-    \only<5>{
+    \only<3>{
+      \begin{figure}
+        \includegraphics{bad}
+      \end{figure}
+    }
+    \only<6>{
       \vspace{0.5em}
       \begin{center}
         \Huge \textbf{R}un \textbf{L}ength \textbf{E}ncoding \Large (\textbf{RLE})
@@ -741,7 +746,7 @@ class AssetType(IntEnum):
     \item Decoding sounds\pause
     \item Extracting animation sequences\pause
     \item Handling fonts and text\pause
-    \item Decompiling game bytecode
+    \item Decompiling bytecode
   \end{itemize}
 \end{frame}
 
@@ -756,6 +761,8 @@ class AssetType(IntEnum):
   \end{center}
   \source{\cite{ScummVM}}
 \end{frame}
+
+\againframe<2>{question}
 
 \begin{frame}
   \begin{figure}
