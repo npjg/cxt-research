@@ -139,10 +139,10 @@
 % https://tex.stackexchange.com/questions/48473/best-way-to-give-sources-of-images-used-in-a-beamer-presentation
 \usepackage[absolute,overlay]{textpos}
 
-\setbeamercolor{framesource}{fg=gray}
+\setbeamercolor{framesource}{fg=gray!20}
 \setbeamerfont{framesource}{size=\footnotesize}
 
-\newcommand{\source}[1]{\begin{textblock*}{4cm}(11.5cm,8.1cm)
+\newcommand{\source}[1]{\begin{textblock*}{4cm}(11.5cm,8cm)
     \begin{beamercolorbox}[ht=0.5cm,right]{framesource}
         \usebeamerfont{framesource}\usebeamercolor[fg]{framesource} Source: {#1}
     \end{beamercolorbox}
@@ -189,13 +189,13 @@
   \frame{\titlepage}
 }
 
-% \usebackgroundtemplate{\includegraphics[width=\paperwidth,height=\paperheight]{solidbluenolu}}
-\frame{}
+{
+  \usebackgroundtemplate{\includegraphics[width=\paperwidth,height=\paperheight]{demossblue}}
+  \frame{\titlepage}
+}
 
-\begin{frame}
-  \fitimage{gsocsun}
-  \source{\cite{GoogleSummerCode2020}}
-\end{frame}
+% \usebackgroundtemplate{\includegraphics[width=\paperwidth,height=\paperheight]{solidbluenolu}}
+% \frame{}
 
 \begin{frame}
   \fitimage{gsoc}
@@ -254,10 +254,6 @@
 
 \begin{frame}
   \fitimage{overlay.png}
-  % \tikz[overlay,remember picture]
-  % \node[anchor=north east] at (0, 1) {
-  %   \includegraphics{lionking}
-  % };
   \source{\cite{AnimatedStoryBook101}, \cite{AnimatedStoryBookWinnie},
     \cite{AnimatedStoryBookLion}, \cite{AnimatedStoryBookHercules},
     \cite{AnimatedStoryBookPocahontas}}
@@ -419,18 +415,12 @@
 
 \begin{frame}{Files}
   \begin{figure}
-    \only<1-3>{\hexdump{garage-117-0x00-0x80.2}{garage}{117.cxt}}
-    \only<4>{\hexdump{garage-117-0x00-0x80.3}{garage}{117.cxt}}
-    \only<5>{\hexdump{garage-117-0x00-0x80.4}{garage}{117.cxt}}
+    \only<1>{\hexdump{garage-117-0x00-0x80.2}{garage}{117.cxt}}
+    % \only<4>{\hexdump{garage-117-0x00-0x80.3}{garage}{117.cxt}}
+    \only<2>{\hexdump{garage-117-0x00-0x80.4}{garage}{117.cxt}}
   \end{figure}
   \begin{overlayarea}{\textwidth}{0.3\textheight}
-    \only<1-4>{
-      \begin{center}\pause
-        \Huge \texttt{0x09\,c7\,66} bytes\\ \pause
-        \huge \textbf{(little endian)}
-      \end{center}
-    }
-    \onslide<5>{
+    \onslide<2>{
       \begin{center}
         \Huge What's in there?
       \end{center}
@@ -440,10 +430,10 @@
 
 \section{Parse data structures}
 
-\begin{frame}{Structures}\pause
-  \fitimage{garage}
-  \source{\cite{AmazonComTonka}}
-\end{frame}
+% \begin{frame}{Structures}\pause
+%   \fitimage{garage}
+%   \source{\cite{AmazonComTonka}}
+% \end{frame}
 
 % Don't change the space with highlighting:
 % https://tex.stackexchange.com/questions/198931/color-overshoots-when-using-cellcolor-without-intercolumn-space
@@ -616,17 +606,9 @@ class DatumType(IntEnum):
 \end{overlayarea}
 \end{frame}
 
-\againframe{proverb}
-
 \againframe<11->{discover1}
 
-% \newcommand{\soundheader}[1]{
-%   \headerinternal{garage-117-0x2c26-0x72}{#1}{garage}{117.cxt}
-% }
-
-% \begin{frame}{Structures}
-%   \soundheader{0}
-% \end{frame}
+\againframe{proverb}
 
 \begin{frame}
   % \fitimage{cxtcode}
@@ -638,6 +620,10 @@ class DatumType(IntEnum):
 
 \begin{frame}
   \fitimage{cxtrepo}
+\end{frame}
+
+\begin{frame}{Structures}
+\imageheader{0}
 \end{frame}
 
 \begin{frame}[fragile]{Structures}
@@ -672,17 +658,6 @@ class DatumType(IntEnum):
 
 \section{Extract game assets}
 
-\begin{frame}{Assets}
-  \only<1>{\imageheader{0}}
-  \only<2-3>{\imageheader{6}}
-  \begin{overlayarea}{\textwidth}{0.2\textheight}
-    \only<3>{\vspace{-1em}
-      \begin{center}
-      \Huge \texttt{07 00}
-    \end{center}}
-  \end{overlayarea}
-\end{frame}
-
 \begin{frame}[fragile]{Assets}
 \begin{lstlisting}
 class AssetType(IntEnum):
@@ -699,6 +674,10 @@ class AssetType(IntEnum):
     FON  = 0x001b, # Font
     FUN  = 0x0069, # Function
 \end{lstlisting}
+\end{frame}
+
+\begin{frame}{Assets}
+  \imageheader{14}
 \end{frame}
 
 \begin{frame}{Assets}
@@ -719,6 +698,7 @@ class AssetType(IntEnum):
 
 \begin{frame}{Assets}
   \fitimage{300.png}
+  \source{\cite{AmazonComTonka}}
 \end{frame}
 
 \newcommand{\rledata}[1]{
@@ -752,6 +732,7 @@ class AssetType(IntEnum):
   \begin{figure}
     \includegraphics[height=\textheight]{85-0}
   \end{figure}
+  \source{\cite{AnimatedStoryBookLion}}
 \end{frame}
 
 \begin{frame}{Assets}
