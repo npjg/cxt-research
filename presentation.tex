@@ -213,10 +213,10 @@
     \includegraphics[scale=0.4]{scummvm}
   \end{figure}
   \vspace{1em}\pause
-  \begin{itemize}
-    \item Open-source reimplementation of game interpreters\pause
+  {\Large \begin{itemize}
+    \item Open-source reimplementation of adventure game interpreters\pause
     \item Original game data playable on newer and diverse platforms
-  \end{itemize}
+  \end{itemize}}
   \source{\cite{ScummVM}}
 \end{frame}
 
@@ -417,21 +417,11 @@
   \end{columns}
 \end{frame}
 
-\begin{frame}[fragile]{\texttt{RIFF}}
-\begin{lstlisting}[firstnumber=1, label=glabels, xleftmargin=10pt]
-typedef struct {
-     char ckID[4];         // Unique chunk identifier
-     uint32 ckSize;        // Size of field <ckData>
-     byte *ckData[ckSize]; // Actual data
-} chunk;
-\end{lstlisting}
-\end{frame}
-
 \begin{frame}{Files}
   \begin{figure}
     \only<1-3>{\hexdump{garage-117-0x00-0x80.2}{garage}{117.cxt}}
     \only<4>{\hexdump{garage-117-0x00-0x80.3}{garage}{117.cxt}}
-    \only<5-6>{\hexdump{garage-117-0x00-0x80.4}{garage}{117.cxt}}
+    \only<5>{\hexdump{garage-117-0x00-0x80.4}{garage}{117.cxt}}
   \end{figure}
   \begin{overlayarea}{\textwidth}{0.3\textheight}
     \only<1-4>{
@@ -440,10 +430,9 @@ typedef struct {
         \huge \textbf{(little endian)}
       \end{center}
     }
-    \onslide<5-6>{
+    \onslide<5>{
       \begin{center}
-        \Huge What's in there?\\
-        \onslide<6>{\huge \textbf{\texttt{igod}?}}
+        \Huge What's in there?
       \end{center}
     }
   \end{overlayarea}
@@ -504,11 +493,6 @@ typedef struct {
       \begin{center}
         \Large \texttt{img_7xn1_background} \\
         \Huge $19\equiv \texttt{0x13}$
-      \end{center}
-    }
-    \only<15-16>{
-      \begin{center}
-        \Huge \texttt{04 00}\only<16>{: \texttt{uint32}}
       \end{center}
     }
     \only<17>{
@@ -723,12 +707,11 @@ class AssetType(IntEnum):
   }
   \only<4-5>{\imagedata{4}}
   \only<6>{\imagedata{5}}
-  \only<7>{\imagedata{6}}
   \begin{overlayarea}{\textwidth}{0.3\textheight}
-    \only<5-7>{
+    \only<5-6>{
       \begin{center}
         \huge $640 \times 480 = 307\,200 \equiv \texttt{0x4b000}$ \\
-        \only<6-7>{$\texttt{00 b0 04 00}$}
+        \only<6>{$\texttt{00 b0 04 00}$}
       \end{center}
     }
   \end{overlayarea}
@@ -742,116 +725,20 @@ class AssetType(IntEnum):
   \headerinternal{garage-110-0x4b9f4-0x60}{#1}{garage}{110.cxt}
 }
 
-\begin{frame}<-9>[label=assets]{Assets}
-  \foreach\x in {0,1,2,3}{
-    \only<\x>{\rledata{\x}}
-  }
-  \only<4-5>{\rledata{4}}
-  \only<6-8>{\rledata{3}}
-  \only<9>{\rledata{4}}
-  \only<10-14>{\rledata{5}}
-  \only<15>{\rledata{6}}
-  \only<16-17>{\rledata{7}}
-  \only<18>{\rledata{8}}
-  \only<19>{\rledata{9}}
-  \only<20-21>{\rledata{10}}
-  \begin{overlayarea}{\textwidth}{0.3\textheight}
-    \vspace{-3em}
-    \only<5-9>{
-      \vspace{2em}
-      \begin{figure}
-        \includegraphics{bad}
-      \end{figure}
-    }
-    \onslide<6-9>{
-      \vspace{-1.8em}
-      \begin{center}
-        \LARGE $\onslide<6-10>{\texttt{0x00f8}} \onslide<7-9>{\times \texttt{0x00c9}}
-        \onslide<8-9>{ = \texttt{0xc2b8} } \onslide<9>{ \ll \texttt{0x298e}}$
-      \end{center}
-    }
-    \only<10-11>{
-      \begin{figure}
-        \includegraphics[height=0.2\textheight]{flagtop}
-      \end{figure}
-    }
-    \only<12>{
-      % \vspace{-2em}
-      \begin{figure}
-        \includegraphics[height=0.2\textheight]{flagtop1}
-      \end{figure}
-      \vspace{-2.5em}
-      \begin{center}
-        \Huge $17\equiv \texttt{0x11}$ pixels wide
-      \end{center}
-    }
-    \only<13>{
-      \begin{table}
-        \LARGE
-        \begin{tabular}{c@{ }|@{ }c@{ }|@{ }c@{ }|@{ }c@{ }|@{ }c@{ }}
-          \texttt{00 00} & \texttt{00 03} & \texttt{78 00} & \texttt{11} & \texttt{fe} \\
-          \hline
-          New row & Encoding & Offset & Run length & Color
-        \end{tabular}
-      \end{table}
-    }
-    \only<14,21>{
-      \vspace{2em}
+\begin{frame}[label=assets]{Assets}
+  \only<1>{\rledata{2}}
+  \only<2>{\rledata{4}}
+  \only<3>{\rledata{5}}
+  \only<4-5>{\rledata{10}}
+  \begin{overlayarea}{\textwidth}{0.2\textheight}
+    \only<5>{
+      \vspace{0.5em}
       \begin{center}
         \Huge \textbf{R}un \textbf{L}ength \textbf{E}ncoding \Large (\textbf{RLE})
       \end{center}
     }
-    \only<15>{
-      \begin{table}
-        \LARGE
-        \begin{tabular}{c@{ }|@{ }c@{ }|@{ }c@{ }}
-          \texttt{00 00} & \texttt{00 03} & \texttt{76 00} \\
-          \hline
-          New row & Encoding & Offset
-        \end{tabular}
-      \end{table}
-    }
-    \only<16>{
-      \begin{figure}
-        \includegraphics[height=0.2\textheight]{flagtop2}
-      \end{figure}
-    }
-    \only<17>{
-      \begin{table}
-        \LARGE
-        \begin{tabular}{c@{ }|@{ }c@{ }}
-          \texttt{00 04} & \texttt{fe fe fe 55} \\
-          \hline
-          Raw length & Data
-        \end{tabular}
-      \end{table}
-    }
-    \only<18>{
-      \begin{figure}
-        \includegraphics[height=0.2\textheight]{flagtop3}
-      \end{figure}
-    }
-    \only<19>{
-      \begin{figure}
-        \includegraphics[height=0.2\textheight]{flagtop4}
-      \end{figure}
-    }
-    \only<20>{
-      \begin{figure}
-        \includegraphics[height=0.2\textheight]{flagtop5}
-      \end{figure}
-    }
   \end{overlayarea}
 \end{frame}
-
-\begin{frame}{Assets}
-  \begin{figure}
-    \only<1>{\includegraphics[scale=1]{172.png}}
-    \only<2>{\includegraphics[height=0.2\textheight]{flagtop}}
-  \end{figure}
-\end{frame}
-
-\againframe<10->{assets}
 
 \begin{frame}
   \vspace{-1em}
@@ -861,13 +748,14 @@ class AssetType(IntEnum):
 \end{frame}
 
 \begin{frame}
+  \vspace{-1em}
   \begin{figure}
     \includegraphics[height=\textheight]{85-0}
   \end{figure}
 \end{frame}
 
 \begin{frame}{Assets}
-  \Large We haven't even begun discussing...
+  \Large We haven't even begun discussing...\pause
   \begin{itemize}
     \item Decoding sounds\pause
     \item Extracting animation sequences\pause
@@ -877,102 +765,6 @@ class AssetType(IntEnum):
 \end{frame}
 
 \section{Write interactive engine}
-
-\newcommand{\bcdata}[1]{
-  \headerinternal{dalmatians-168-0x4b7c-0x94}{#1}{dalmatians}{168.cxt}
-}
-
-\begin{frame}[label=current,fragile]{Code}
-  % \vspace{-1em}
-  % \begin{center}
-  %   \huge Code
-  % \end{center}
-\begin{lstlisting}
-class Movie(Object):
-    def __init__(self, stream, header, chunk, stills=[]):
-        self.stills = stills
-        self.chunks = []
-
-        end = stream.tell() + chunk['size']
-        codes = {
-            "header": chunk_int(chunk),
-            "video" : chunk_int(chunk) + 1,
-            "audio" : chunk_int(chunk) + 2,
-        }
-\end{lstlisting}
-\end{frame}
-
-\begin{frame}{Bytecode}
-  \bcdata{0}
-\end{frame}
-
-\begin{frame}
-  \begin{center}
-    \LARGE In bytecode, \\
-    \textbf{numbers take the place of words}.\pause
-  \end{center}
-  \begin{table}
-    \Large \begin{tabular}{@{ }c@{ }|@{ }c@{ }}
-      \textbf{Compile} \onslide<3>{& \textbf{Decompile}} \\
-      \hline
-      \texttt{Code}$\implies$ Bytecode \onslide<3>{& Bytecode $\implies$ \texttt{Code}}
-    \end{tabular}
-  \end{table}
-\end{frame}
-
-\begin{frame}[label=func]{Interactivity}
-    \only<2>{\bcdata{0}}
-    \only<3>{\bcdata{1}}
-\end{frame}
-
-\begin{frame}[fragile]{Interactivity}
-  \vspace{-3em}
-  \begin{center}
-    \begin{tabular}{c}
-\begin{lstlisting}[basicstyle=\fontsize{8}{9}\selectfont]
-{
-  "sz": 114,
-  "ch": [
-    {
-      "sz": 108,
-      "ch": [
-        [
-          202,
-          [207, [103], 4],
-          [156, 0]
-        ],
-        {
-          "sz": 20,
-          "ch": [
-            [
-              219, 119, 0
-            ],
-            0
-          ]
-        },
-        [220, 202, 0],
-        [103],
-      ]
-    }
-  ]
-}
-\end{lstlisting}
-    \end{tabular}
-\end{center}
-\end{frame}
-
-\begin{frame}{Pseudocode}\pause
-  \begin{enumerate}
-    \LARGE
-  \item \texttt{``Display asset 119.''}\pause
-  \item \texttt{``When asset 119 is clicked, play movie 202 at its location.''}\pause
-  \item \texttt{``When movie 202 finishes, play asset 120.''}
-  \end{enumerate}
-\end{frame}
-
-\begin{frame}
-  \bcdata{0}
-\end{frame}
 
 \againframe{msitrans}
 
@@ -994,8 +786,10 @@ class Movie(Object):
   \end{center}
 \end{frame}
 
-\frame{\titlepage}
-
+{
+  \usebackgroundtemplate{\includegraphics[width=\paperwidth,height=\paperheight]{demossblue}}
+  \frame{\titlepage}
+}
 \begin{frame}[allowframebreaks]{References}
   \bibliographystyle{IEEEtran}
   \bibliography{MediaStation}
